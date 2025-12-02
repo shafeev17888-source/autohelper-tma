@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoHelper 🚗</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <header>
+            <h1>🚗 AutoHelper</h1>
+            <p>Твой умный помощник для авто</p>
+        </header>
+
+        <!-- Основной контент -->
+        <main>
+            <div class="card" id="diagnostics">
+                <h2>🔍 Диагностика</h2>
+                <p>Проверь состояние авто</p>
+                <button onclick="runDiagnostics()">Запустить проверку</button>
+                <div class="result" id="diagnostics-result"></div>
+            </div>
+
+            <div class="card" id="services">
+                <h2>🔧 Найти сервис</h2>
+                <p>Лучшие мастерские рядом</p>
+                <button onclick="findServices()">Найти</button>
+                <div class="result" id="services-result"></div>
+            </div>
+
+            <div class="card" id="history">
+                <h2>📖 История авто</h2>
+                <p>Все ремонты в одном месте</p>
+                <button onclick="showHistory()">Открыть историю</button>
+                <div class="result" id="history-result"></div>
+            </div>
+
+            <div class="card" id="reminders">
+                <h2>⏰ Напоминания</h2>
+                <p>Не пропусти важное</p>
+                <button onclick="setReminder()">Добавить напоминание</button>
+            </div>
+        </main>
+
+        <!-- Подвал -->
+        <footer>
+            <p>AutoHelper © 2024</p>
+            <p>Ваш авто — наша забота</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Тело приложения */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Контейнер */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Шапка */
+header {
+    text-align: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #FFD700; /* Золотой цвет */
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Карточки */
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #4FC3F7; /* Голубой */
+}
+
+.card p {
+    margin-bottom: 20px;
+    opacity: 0.8;
+    font-size: 1rem;
+}
+
+/* Кнопки */
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(to right, #FF416C, #FF4B2B);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Результаты */
+.result {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    display: none; /* Сначала скрыты */
+}
+
+/* Подвал */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Для телефонов */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+}
