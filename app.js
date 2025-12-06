@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tg.MainButton.setText('Открыть меню').show();
     
     // Приветствие
-    
+    //showNotification('AutoHelper готов помочь с вашим авто! 🚗');
 });
 
 // 1. Функция диагностики
@@ -48,7 +48,7 @@ function runDiagnostics() {
         resultDiv.innerHTML = html;
         
         // Показываем уведомление в Telegram
-        showNotification('Диагностика завершена! Проверьте результаты.');
+       // showNotification('Диагностика завершена! Проверьте результаты.');
     }, 1500);
 }
 
@@ -118,7 +118,7 @@ function setReminder() {
             
             // В реальном приложении тут сохранение в базу данных
             tg.showPopup({
-                title: '✅ Напоминание создано',
+                title: 'Напоминание создано',
                 message: `"${reminderText}"\nЧерез ${date} дней`,
                 buttons: [{ type: 'ok' }]
             });
@@ -178,3 +178,4 @@ style.textContent = `
 `;
 
 document.head.appendChild(style);
+
