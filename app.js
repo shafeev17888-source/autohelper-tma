@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tg.MainButton.setText('Открыть меню').show();
     
     // Приветствие
-    showNotification('AutoHelper готов помочь с вашим авто! 🚗');
+    
 });
 
 // 1. Функция диагностики
@@ -176,4 +176,5 @@ style.textContent = `
         border-left-color: #FF416C;
     }
 `;
+
 document.head.appendChild(style);
