@@ -3,376 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Helper</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>AutoHelper — Умный помощник для вашего авто</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@splinetool/viewer@1.9.72/build/spline-viewer.js" type="module"></script>
     <style>
-        /* Стили внутри HTML для надёжности */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        /* Основные стили и сброс */
+        :root {
+            --color-primary: #4361ee;
+            --color-primary-glow: rgba(67, 97, 238, 0.4);
+            --color-secondary: #06d6a0;
+            --color-dark: #0f172a;
+            --color-light: #f8fafc;
+            --color-glass: rgba(255, 255, 255, 0.08);
+            --color-glass-border: rgba(255, 255, 255, 0.1);
         }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #f8f9fa;
-            color: #333;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--color-dark) 0%, #1e293b 100%);
+            color: var(--color-light);
+            line-height: 1.6;
+            overflow-x: hidden;
             min-height: 100vh;
         }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e9ecef;
-        }
-        
-        h1 {
-            font-size: 24px;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-        
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #e9ecef;
-        }
-        
-        .card h2 {
-            font-size: 18px;
-            color: #2c3e50;
-            margin-bottom: 12px;
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Секция "Герой" с крупной типографикой и интерактивной витриной */
+        .hero {
+            min-height: 90vh;
             display: flex;
             align-items: center;
-            gap: 10px;
+            position: relative;
+            padding: 4rem 0;
         }
-        
-        .card p {
-            color: #6c757d;
-            font-size: 14px;
-            margin-bottom: 16px;
+        .hero-content { flex: 1; max-width: 600px; z-index: 2; }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: #3498db;
+        .hero p {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            margin-bottom: 2.5rem;
+            max-width: 540px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--color-primary), #3a56d4);
             color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 12px;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 30px var(--color-primary-glow);
+            transition: all 0.3s ease;
         }
-        
-        .btn:hover {
-            background: #2980b9;
-            transform: translateY(-1px);
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px var(--color-primary-glow);
         }
-        
-        .btn:active {
-            transform: translateY(0);
+
+        /* Контейнер для 3D-модели (Интерактивная витрина) */
+        .showcase-container {
+            flex: 1;
+            position: relative;
+            height: 500px;
+            border-radius: 24px;
+            overflow: hidden;
+            /* Эффект "жидкого стекла" для рамки контейнера */
+            background: var(--color-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--color-glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        
-        .btn.secondary {
-            background: #2ecc71;
+        /* Стили для самой 3D-модели от Spline */
+        spline-viewer {
+            width: 100%;
+            height: 100%;
         }
-        
-        .btn.secondary:hover {
-            background: #27ae60;
+
+        /* Сетка функций в стиле Bento Grid */
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 5rem 0 3rem;
         }
-        
-        .btn.emergency {
-            background: #e74c3c;
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: 220px;
+            gap: 24px;
+            margin-bottom: 5rem;
         }
-        
-        .btn.emergency:hover {
-            background: #c0392b;
-        }
-        
-        .result {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
-            border-left: 4px solid #3498db;
-            display: none;
-        }
-        
-        .result.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .status-item {
+        /* Стили для общей карточки в бенто-сетке */
+        .bento-card {
+            background: var(--color-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 24px;
+            padding: 2rem;
             display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            overflow: hidden;
         }
-        
-        .status-item:last-child {
-            border-bottom: none;
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at top right, var(--color-primary-glow), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
         }
-        
-        .status-good {
-            color: #27ae60;
+        .bento-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+        .bento-card > * { position: relative; z-index: 1; } /* Контент поверх градиента */
+
+        /* Расположение карточек в сетке */
+        .card-diagnostic { grid-column: span 6; grid-row: span 1; }
+        .card-service { grid-column: span 6; grid-row: span 1; }
+        .card-history { grid-column: span 4; grid-row: span 1; }
+        .card-ai { grid-column: span 8; grid-row: span 1; }
+        .card-reminder { grid-column: span 5; grid-row: span 1; }
+        .card-emergency { grid-column: span 7; grid-row: span 1; }
+
+        /* Стили для иконок и текста внутри карточек */
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .bento-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .bento-card p {
+            color: #94a3b8;
+        }
+
+        /* Секция для статических изображений (скриншотов приложения) */
+        .screenshots-section { margin-bottom: 5rem; }
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .screenshot-card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            background: #1e293b;
+            aspect-ratio: 9 / 16; /* Соотношение сторон как у телефона */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
             font-weight: 600;
         }
-        
-        .status-warning {
-            color: #f39c12;
-            font-weight: 600;
+        .screenshot-card:hover { transform: scale(1.03); }
+        /* Область для вставки изображения */
+        .screenshot-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
         }
-        
+
+        /* Футер */
         .footer {
             text-align: center;
-            margin-top: 30px;
-            color: #95a5a6;
-            font-size: 13px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
+            padding: 3rem 0;
+            color: #64748b;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 4rem;
         }
-        
-        /* Иконки через emoji для простоты */
-        .icon {
-            font-size: 20px;
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 2rem;}
+            .hero h1 { font-size: 2.5rem; }
+            .showcase-container { width: 100%; height: 400px; margin-top: 3rem; }
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto;}
+            .bento-card { grid-column: span 1 !important; grid-row: span 1 !important; }
+            .section-title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🚗 Auto Helper</h1>
-        <p class="subtitle">Ваш личный авто-помощник</p>
-    </div>
-    
-    <!-- Диагностика -->
-    <div class="card">
-        <h2><span class="icon">🔍</span> Быстрая диагностика</h2>
-        <p>Проверьте основные системы автомобиля</p>
-        <button class="btn" onclick="runDiagnostics()">Запустить проверку</button>
-        <div class="result" id="diagnostics-result"></div>
-    </div>
-    
-    <!-- Найти сервис -->
-    <div class="card">
-        <h2><span class="icon">🔧</span> Найти сервис</h2>
-        <p>Лучшие мастерские рядом с вами</p>
-        <button class="btn secondary" onclick="findServices()">Найти ближайшие</button>
-        <div class="result" id="services-result"></div>
-    </div>
-    
-    <!-- История -->
-    <div class="card">
-        <h2><span class="icon">📊</span> История обслуживания</h2>
-        <p>Все записи о ремонтах в одном месте</p>
-        <button class="btn" onclick="showHistory()">Показать историю</button>
-        <div class="result" id="history-result"></div>
-    </div>
-    
-    <!-- Экстренная помощь -->
-    <div class="card">
-        <h2><span class="icon">🚨</span> Экстренная помощь</h2>
-        <p>Что делать в нештатной ситуации</p>
-        <button class="btn emergency" onclick="showEmergency()">Инструкции</button>
-        <div class="result" id="emergency-result"></div>
-    </div>
-    
-    <div class="footer">
-        <p>© 2024 Auto Helper</p>
-        <p>Ваш авто — наша забота</p>
+    <div class="container">
+        <!-- Секция 1: Герой с интерактивной 3D-витриной -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>AutoHelper<br>Умный помощник для вашего авто</h1>
+                <p>Комплексный сервис для диагностики, обслуживания и управления историей вашего автомобиля. Просто, понятно, технологично.</p>
+                <a href="#functions" class="cta-button">Исследовать возможности</a>
+            </div>
+            <div class="showcase-container">
+                <!-- 
+                    ИНСТРУКЦИЯ ПО 3D-МОДЕЛИ:
+                    1. Перейди на https://spline.design
+                    2. Создай или найди модель автомобиля/двигателя (можно искать "car" или "engine").
+                    3. Опубликуй сцену (Share -> Publish).
+                    4. Скопируй ссылку на .splinecode и вставь её ниже в атрибут `url`.
+                    5. Модель станет интерактивной — её можно вращать мышью.
+                -->
+                <spline-viewer
+                    loading-anim-type="spinner-small-dark"
+                    url="https://prod.spline.design/6Wq1Q7YV7KQ-0UHA/scene.splinecode"
+                >
+                </spline-viewer>
+            </div>
+        </section>
+
+        <!-- Секция 2: Функции в стиле Bento Grid -->
+        <h2 class="section-title" id="functions">Что умеет AutoHelper</h2>
+        <div class="bento-grid">
+            <div class="bento-card card-diagnostic">
+                <div class="card-icon">🔍</div>
+                <h3>Умная диагностика</h3>
+                <p>Мгновенная проверка систем автомобиля через OBD-II. Получайте чёткий отчёт, а не просто коды ошибок.</p>
+            </div>
+            <div class="bento-card card-service">
+                <div class="card-icon">🔧</div>
+                <h3>Подбор сервиса</h3>
+                <p>Находите проверенные станции рядом с вами. Сравнивайте цены, рейтинги и отзывы.</p>
+            </div>
+            <div class="bento-card card-history">
+                <div class="card-icon">📖</div>
+                <h3>Цифровая история</h3>
+                <p>Храните все данные о ремонтах, ТО и заменах запчастей в одном защищённом месте.</p>
+            </div>
+            <div class="bento-card card-ai">
+                <div class="card-icon">🤖</div>
+                <h3>AI-ассистент</h3>
+                <p>Задавайте вопросы о проблемах с авто. Наш помощник анализирует симптомы и предлагает решения.</p>
+            </div>
+            <div class="bento-card card-reminder">
+                <div class="card-icon">⏰</div>
+                <h3>Умные напоминания</h3>
+                <p>Сервис сам напомнит о следующем ТО, замене масла или страховке, основываясь на пробеге.</p>
+            </div>
+            <div class="bento-card card-emergency">
+                <div class="card-icon">🚨</div>
+                <h3>Экстренная помощь</h3>
+                <p>Чёткие инструкции на случай ДТП, поломки на трассе. Быстрый вызов эвакуатора и техпомощи.</p>
+            </div>
+        </div>
+
+        <!-- Секция 3: Скриншоты интерфейса TMA -->
+        <section class="screenshots-section">
+            <h2 class="section-title">Интерфейс в Telegram Mini App</h2>
+            <div class="screenshots-grid">
+                <!-- Карточка 1: Главный экран -->
+                <div class="screenshot-card">
+                    <!-- 
+                        ИНСТРУКЦИЯ ДЛЯ ИЗОБРАЖЕНИЙ:
+                        1. Подготовь 3-4 скриншота своего TMA "AutoHelper" (главный экран, диагностика, история).
+                        2. Залей их на любой хостинг (например, Imgur, GitHub, или напрямую в папку проекта).
+                        3. Скопируй прямую ссылку на каждое изображение.
+                        4. Вставь ссылки ниже, заменив текст "ВСТАВЬ_ССЫЛКУ_1.jpg" и подписи.
+                    -->
+                    <div class="screenshot-placeholder">
+                        <!-- Замени этот div тегом <img> -->
+                        <!-- Пример: <img src="https://ваш-хостинг/glavny_ekran.png" alt="Главный экран AutoHelper" style="width:100%; height:100%; object-fit:cover;"> -->
+                        <span>Скриншот 1: Главный экран</span>
+                    </div>
+                </div>
+                <!-- Карточка 2: Экран диагностики -->
+                <div class="screenshot-card">
+                    <div class="screenshot-placeholder">
+                        <span>Скриншот 2: Диагностика</span>
+                    </div>
+                </div>
+                <!-- Карточка 3: История и сервисы -->
+                <div class="screenshot-card">
+                    <div class="screenshot-placeholder">
+                        <span>Скриншот 3: История и сервисы</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Футер -->
+        <footer class="footer">
+            <p>© 2024 AutoHelper. Ваш автомобиль заслуживает умного ухода.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9em; color: #475569;">Сайт создан с использованием современных трендов веб-дизайна.</p>
+        </footer>
     </div>
 
+    <!-- Небольшой скрипт для плавной прокрутки к якорям -->
     <script>
-        // Инициализация Telegram Web App
-        const tg = window.Telegram.WebApp;
-        
-        // При загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            tg.expand(); // Раскрываем на весь экран
-            console.log('Auto Helper загружен');
-        });
-        
-        // 1. Функция диагностики
-        function runDiagnostics() {
-            console.log('Запуск диагностики...');
-            
-            const resultDiv = document.getElementById('diagnostics-result');
-            resultDiv.innerHTML = '<p>🔍 Проверяю системы автомобиля...</p>';
-            resultDiv.className = 'result show';
-            
-            // Имитация проверки
-            setTimeout(() => {
-                const diagnostics = [
-                    { system: 'Двигатель', status: '✅ Отлично', check: 'status-good' },
-                    { system: 'Тормоза', status: '✅ Норма', check: 'status-good' },
-                    { system: 'Аккумулятор', status: '⚠️ 75%', check: 'status-warning' },
-                    { system: 'Шины', status: '✅ 2.3 бар', check: 'status-good' },
-                    { system: 'Масло', status: '✅ Норма', check: 'status-good' }
-                ];
-                
-                let html = '<h3 style="margin-bottom: 12px;">Результаты:</h3>';
-                diagnostics.forEach(item => {
-                    html += `
-                        <div class="status-item">
-                            <span>${item.system}</span>
-                            <span class="${item.check}">${item.status}</span>
-                        </div>
-                    `;
-                });
-                
-                html += '<p style="margin-top: 12px; color: #f39c12;">⚠️ Рекомендуем проверить аккумулятор</p>';
-                
-                resultDiv.innerHTML = html;
-                
-                // Уведомление в Telegram
-                if (tg && tg.showAlert) {
-                    tg.showAlert('Диагностика завершена!');
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
                 }
-            }, 1500);
-        }
-        
-        // 2. Поиск сервисов
-        function findServices() {
-            console.log('Поиск сервисов...');
-            
-            const resultDiv = document.getElementById('services-result');
-            resultDiv.innerHTML = '<p>🔎 Ищу сервисы рядом...</p>';
-            resultDiv.className = 'result show';
-            
-            setTimeout(() => {
-                const services = [
-                    { name: 'Авто-Профи', distance: '1.2 км', rating: '4.8 ★', phone: '+7 (123) 456-78-90' },
-                    { name: 'Быстрый Ремонт', distance: '2.5 км', rating: '4.6 ★', phone: '+7 (234) 567-89-01' },
-                    { name: 'Премиум Сервис', distance: '3.1 км', rating: '4.9 ★', phone: '+7 (345) 678-90-12' }
-                ];
-                
-                let html = '<h3 style="margin-bottom: 12px;">Найденные сервисы:</h3>';
-                services.forEach(service => {
-                    html += `
-                        <div style="margin-bottom: 12px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
-                            <strong>${service.name}</strong><br>
-                            📍 ${service.distance} | ${service.rating}<br>
-                            📞 ${service.phone}
-                        </div>
-                    `;
-                });
-                
-                html += '<button class="btn" style="margin-top: 8px;" onclick="callService()">Позвонить в ближайший</button>';
-                
-                resultDiv.innerHTML = html;
-            }, 1200);
-        }
-        
-        // 3. История обслуживания
-        function showHistory() {
-            console.log('Показ истории...');
-            
-            const resultDiv = document.getElementById('history-result');
-            resultDiv.innerHTML = '<p>📅 Загружаю историю...</p>';
-            resultDiv.className = 'result show';
-            
-            const history = [
-                { date: '15.10.2023', service: 'Замена масла', cost: '5,000 ₽' },
-                { date: '22.08.2023', service: 'Тормозные колодки', cost: '12,000 ₽' },
-                { date: '10.05.2023', service: 'Техническое обслуживание', cost: '15,000 ₽' },
-                { date: '01.02.2023', service: 'Аккумулятор', cost: '8,000 ₽' }
-            ];
-            
-            setTimeout(() => {
-                let html = '<h3 style="margin-bottom: 12px;">История обслуживания:</h3>';
-                
-                history.forEach(record => {
-                    html += `
-                        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
-                            <strong>${record.date}</strong><br>
-                            ${record.service}<br>
-                            <span style="color: #27ae60;">${record.cost}</span>
-                        </div>
-                    `;
-                });
-                
-                html += '<p style="margin-top: 12px;"><strong>Итого: 40,000 ₽</strong></p>';
-                
-                resultDiv.innerHTML = html;
-            }, 800);
-        }
-        
-        // 4. Экстренная помощь
-        function showEmergency() {
-            console.log('Показ экстренной помощи...');
-            
-            const resultDiv = document.getElementById('emergency-result');
-            resultDiv.innerHTML = '<p>🚨 Загружаю инструкции...</p>';
-            resultDiv.className = 'result show';
-            
-            setTimeout(() => {
-                const emergencies = [
-                    {
-                        title: 'Прокол колеса',
-                        steps: ['1. Включить аварийку', '2. Установить знак', '3. Заменить на запаску', '4. Если нет запаски - эвакуатор']
-                    },
-                    {
-                        title: 'Сел аккумулятор', 
-                        steps: ['1. Найти авто-донор', '2. Соединить провода', '3. Завести двигатель', '4. Дать поработать 20 мин']
-                    },
-                    {
-                        title: 'Ключи в машине',
-                        steps: ['1. Не бить стекло!', '2. Вызвать службу вскрытия', '3. Обратиться к дилеру', '4. Сделать дубликат']
-                    }
-                ];
-                
-                let html = '<h3 style="margin-bottom: 12px;">Инструкции:</h3>';
-                
-                emergencies.forEach(emergency => {
-                    html += `
-                        <div style="margin-bottom: 16px;">
-                            <strong>${emergency.title}</strong>
-                            <div style="margin-top: 8px; padding-left: 16px;">
-                                ${emergency.steps.map(step => `<p style="margin-bottom: 4px;">${step}</p>`).join('')}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                html += '<p style="color: #e74c3c; margin-top: 12px;">📞 Экстренный номер: +7 (900) 123-45-67</p>';
-                
-                resultDiv.innerHTML = html;
-            }, 800);
-        }
-        
-        // Дополнительные функции
-        function callService() {
-            alert('Имитация звонка в сервис...\n\nВ реальном приложении здесь будет вызов телефона.');
-        }
-        
-        // Простые утилиты
-        function showNotification(message) {
-            if (tg && tg.showAlert) {
-                tg.showAlert(message);
-            } else {
-                alert(message);
-            }
-        }
+            });
+        });
     </script>
 </body>
 </html>
