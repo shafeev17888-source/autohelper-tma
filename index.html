@@ -3,166 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Helper 🛠️</title>
+    <title>Auto Helper</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили внутри HTML для надёжности */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: #f8f9fa;
+            color: #333;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+        
+        .card h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.secondary {
+            background: #2ecc71;
+        }
+        
+        .btn.secondary:hover {
+            background: #27ae60;
+        }
+        
+        .btn.emergency {
+            background: #e74c3c;
+        }
+        
+        .btn.emergency:hover {
+            background: #c0392b;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-good {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .status-warning {
+            color: #f39c12;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 13px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Иконки через emoji для простоты */
+        .icon {
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Шапка с персональным помощником -->
-        <header class="hero">
-            <div class="avatar">
-                <i class="fas fa-robot"></i>
-            </div>
-            <h1><i class="fas fa-car"></i> Auto Helper</h1>
-            <p class="subtitle">Твой персональный авто-помощник</p>
-            <div class="status">
-                <span class="status-indicator active"></span>
-                <span class="status-text">Готов помочь</span>
-            </div>
-        </header>
-
-        <!-- Быстрые действия -->
-        <section class="quick-actions">
-            <h2><i class="fas fa-bolt"></i> Быстрые действия</h2>
-            <div class="actions-grid">
-                <button class="action-btn" onclick="quickHelp()">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Что делать?</span>
-                    <small>Совет от помощника</small>
-                </button>
-
-                <button class="action-btn" onclick="checkUrgent()">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>Срочная проверка</span>
-                    <small>5 пунктов за 60 сек</small>
-                </button>
-
-                <button class="action-btn" onclick="findNearby()">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Помощь рядом</span>
-                    <small>Эвакуатор, сервис</small>
-                </button>
-
-                <button class="action-btn" onclick="askHelper()">
-                    <i class="fas fa-comments"></i>
-                    <span>Спросить помощника</span>
-                    <small>AI-консультация</small>
-                </button>
-            </div>
-        </section>
-
-        <!-- Основные функции помощника -->
-        <main>
-            <!-- Автоматическая диагностика -->
-            <div class="card assistant-card">
-                <div class="card-header">
-                    <i class="fas fa-stethoscope"></i>
-                    <h2>Умная диагностика</h2>
-                    <button class="small-btn" onclick="autoDiagnose()">
-                        <i class="fas fa-play"></i> Автопроверка
-                    </button>
-                </div>
-                <p>Помощник сам проверит основные системы</p>
-                <div class="assistant-message" id="assistant-message">
-                    <i class="fas fa-robot"></i>
-                    <p>Привет! Я готов проверить ваше авто. Нажмите "Автопроверка"!</p>
-                </div>
-                <div class="result" id="diagnostics-result"></div>
-            </div>
-
-            <!-- Рекомендации помощника -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-lightbulb"></i>
-                    <h2>Рекомендации помощника</h2>
-                </div>
-                <div class="recommendations" id="recommendations">
-                    <div class="recommendation">
-                        <i class="fas fa-oil-can"></i>
-                        <div>
-                            <strong>Заменить масло</strong>
-                            <p>Через 500 км • Помощник напомнит</p>
-                        </div>
-                        <button class="icon-btn" onclick="setReminder('Замена масла', 500)">
-                            <i class="fas fa-bell"></i>
-                        </button>
-                    </div>
-                    <div class="recommendation">
-                        <i class="fas fa-tire"></i>
-                        <div>
-                            <strong>Проверить давление в шинах</strong>
-                            <p>Рекомендуется еженедельно</p>
-                        </div>
-                        <button class="icon-btn" onclick="quickCheck('шины')">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- История общения с помощником -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-history"></i>
-                    <h2>История помощи</h2>
-                </div>
-                <div class="history-items" id="history-items">
-                    <div class="history-item">
-                        <i class="fas fa-check-circle success"></i>
-                        <span>Помощник провёл диагностику</span>
-                        <small>Сегодня, 10:30</small>
-                    </div>
-                    <div class="history-item">
-                        <i class="fas fa-bell reminder"></i>
-                        <span>Напоминание о ТО установлено</span>
-                        <small>Вчера, 15:45</small>
-                    </div>
-                </div>
-                <button class="secondary-btn" onclick="showFullHistory()">
-                    <i class="fas fa-scroll"></i> Полная история помощи
-                </button>
-            </div>
-
-            <!-- Экстренная помощь -->
-            <div class="card emergency-card">
-                <div class="card-header">
-                    <i class="fas fa-life-ring"></i>
-                    <h2>Экстренная помощь</h2>
-                </div>
-                <p>Помощник всегда на связи</p>
-                <div class="emergency-buttons">
-                    <button class="emergency-btn" onclick="emergencyHelp('flat_tire')">
-                        <i class="fas fa-tire-flat"></i>
-                        Прокол колеса
-                    </button>
-                    <button class="emergency-btn" onclick="emergencyHelp('battery')">
-                        <i class="fas fa-car-battery"></i>
-                        Севший аккумулятор
-                    </button>
-                    <button class="emergency-btn" onclick="emergencyHelp('keys')">
-                        <i class="fas fa-key"></i>
-                        Ключи в авто
-                    </button>
-                </div>
-            </div>
-        </main>
-
-        <!-- Панель помощника -->
-        <footer class="assistant-footer">
-            <div class="assistant-input">
-                <input type="text" id="helper-input" placeholder="Спросите помощника...">
-                <button onclick="askQuestion()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            <p class="footer-text">
-                <i class="fas fa-shield-alt"></i> Auto Helper • Ваш надёжный помощник с 2024
-            </p>
-        </footer>
+    <div class="header">
+        <h1>🚗 Auto Helper</h1>
+        <p class="subtitle">Ваш личный авто-помощник</p>
+    </div>
+    
+    <!-- Диагностика -->
+    <div class="card">
+        <h2><span class="icon">🔍</span> Быстрая диагностика</h2>
+        <p>Проверьте основные системы автомобиля</p>
+        <button class="btn" onclick="runDiagnostics()">Запустить проверку</button>
+        <div class="result" id="diagnostics-result"></div>
+    </div>
+    
+    <!-- Найти сервис -->
+    <div class="card">
+        <h2><span class="icon">🔧</span> Найти сервис</h2>
+        <p>Лучшие мастерские рядом с вами</p>
+        <button class="btn secondary" onclick="findServices()">Найти ближайшие</button>
+        <div class="result" id="services-result"></div>
+    </div>
+    
+    <!-- История -->
+    <div class="card">
+        <h2><span class="icon">📊</span> История обслуживания</h2>
+        <p>Все записи о ремонтах в одном месте</p>
+        <button class="btn" onclick="showHistory()">Показать историю</button>
+        <div class="result" id="history-result"></div>
+    </div>
+    
+    <!-- Экстренная помощь -->
+    <div class="card">
+        <h2><span class="icon">🚨</span> Экстренная помощь</h2>
+        <p>Что делать в нештатной ситуации</p>
+        <button class="btn emergency" onclick="showEmergency()">Инструкции</button>
+        <div class="result" id="emergency-result"></div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2024 Auto Helper</p>
+        <p>Ваш авто — наша забота</p>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        // При загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            tg.expand(); // Раскрываем на весь экран
+            console.log('Auto Helper загружен');
+        });
+        
+        // 1. Функция диагностики
+        function runDiagnostics() {
+            console.log('Запуск диагностики...');
+            
+            const resultDiv = document.getElementById('diagnostics-result');
+            resultDiv.innerHTML = '<p>🔍 Проверяю системы автомобиля...</p>';
+            resultDiv.className = 'result show';
+            
+            // Имитация проверки
+            setTimeout(() => {
+                const diagnostics = [
+                    { system: 'Двигатель', status: '✅ Отлично', check: 'status-good' },
+                    { system: 'Тормоза', status: '✅ Норма', check: 'status-good' },
+                    { system: 'Аккумулятор', status: '⚠️ 75%', check: 'status-warning' },
+                    { system: 'Шины', status: '✅ 2.3 бар', check: 'status-good' },
+                    { system: 'Масло', status: '✅ Норма', check: 'status-good' }
+                ];
+                
+                let html = '<h3 style="margin-bottom: 12px;">Результаты:</h3>';
+                diagnostics.forEach(item => {
+                    html += `
+                        <div class="status-item">
+                            <span>${item.system}</span>
+                            <span class="${item.check}">${item.status}</span>
+                        </div>
+                    `;
+                });
+                
+                html += '<p style="margin-top: 12px; color: #f39c12;">⚠️ Рекомендуем проверить аккумулятор</p>';
+                
+                resultDiv.innerHTML = html;
+                
+                // Уведомление в Telegram
+                if (tg && tg.showAlert) {
+                    tg.showAlert('Диагностика завершена!');
+                }
+            }, 1500);
+        }
+        
+        // 2. Поиск сервисов
+        function findServices() {
+            console.log('Поиск сервисов...');
+            
+            const resultDiv = document.getElementById('services-result');
+            resultDiv.innerHTML = '<p>🔎 Ищу сервисы рядом...</p>';
+            resultDiv.className = 'result show';
+            
+            setTimeout(() => {
+                const services = [
+                    { name: 'Авто-Профи', distance: '1.2 км', rating: '4.8 ★', phone: '+7 (123) 456-78-90' },
+                    { name: 'Быстрый Ремонт', distance: '2.5 км', rating: '4.6 ★', phone: '+7 (234) 567-89-01' },
+                    { name: 'Премиум Сервис', distance: '3.1 км', rating: '4.9 ★', phone: '+7 (345) 678-90-12' }
+                ];
+                
+                let html = '<h3 style="margin-bottom: 12px;">Найденные сервисы:</h3>';
+                services.forEach(service => {
+                    html += `
+                        <div style="margin-bottom: 12px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+                            <strong>${service.name}</strong><br>
+                            📍 ${service.distance} | ${service.rating}<br>
+                            📞 ${service.phone}
+                        </div>
+                    `;
+                });
+                
+                html += '<button class="btn" style="margin-top: 8px;" onclick="callService()">Позвонить в ближайший</button>';
+                
+                resultDiv.innerHTML = html;
+            }, 1200);
+        }
+        
+        // 3. История обслуживания
+        function showHistory() {
+            console.log('Показ истории...');
+            
+            const resultDiv = document.getElementById('history-result');
+            resultDiv.innerHTML = '<p>📅 Загружаю историю...</p>';
+            resultDiv.className = 'result show';
+            
+            const history = [
+                { date: '15.10.2023', service: 'Замена масла', cost: '5,000 ₽' },
+                { date: '22.08.2023', service: 'Тормозные колодки', cost: '12,000 ₽' },
+                { date: '10.05.2023', service: 'Техническое обслуживание', cost: '15,000 ₽' },
+                { date: '01.02.2023', service: 'Аккумулятор', cost: '8,000 ₽' }
+            ];
+            
+            setTimeout(() => {
+                let html = '<h3 style="margin-bottom: 12px;">История обслуживания:</h3>';
+                
+                history.forEach(record => {
+                    html += `
+                        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                            <strong>${record.date}</strong><br>
+                            ${record.service}<br>
+                            <span style="color: #27ae60;">${record.cost}</span>
+                        </div>
+                    `;
+                });
+                
+                html += '<p style="margin-top: 12px;"><strong>Итого: 40,000 ₽</strong></p>';
+                
+                resultDiv.innerHTML = html;
+            }, 800);
+        }
+        
+        // 4. Экстренная помощь
+        function showEmergency() {
+            console.log('Показ экстренной помощи...');
+            
+            const resultDiv = document.getElementById('emergency-result');
+            resultDiv.innerHTML = '<p>🚨 Загружаю инструкции...</p>';
+            resultDiv.className = 'result show';
+            
+            setTimeout(() => {
+                const emergencies = [
+                    {
+                        title: 'Прокол колеса',
+                        steps: ['1. Включить аварийку', '2. Установить знак', '3. Заменить на запаску', '4. Если нет запаски - эвакуатор']
+                    },
+                    {
+                        title: 'Сел аккумулятор', 
+                        steps: ['1. Найти авто-донор', '2. Соединить провода', '3. Завести двигатель', '4. Дать поработать 20 мин']
+                    },
+                    {
+                        title: 'Ключи в машине',
+                        steps: ['1. Не бить стекло!', '2. Вызвать службу вскрытия', '3. Обратиться к дилеру', '4. Сделать дубликат']
+                    }
+                ];
+                
+                let html = '<h3 style="margin-bottom: 12px;">Инструкции:</h3>';
+                
+                emergencies.forEach(emergency => {
+                    html += `
+                        <div style="margin-bottom: 16px;">
+                            <strong>${emergency.title}</strong>
+                            <div style="margin-top: 8px; padding-left: 16px;">
+                                ${emergency.steps.map(step => `<p style="margin-bottom: 4px;">${step}</p>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '<p style="color: #e74c3c; margin-top: 12px;">📞 Экстренный номер: +7 (900) 123-45-67</p>';
+                
+                resultDiv.innerHTML = html;
+            }, 800);
+        }
+        
+        // Дополнительные функции
+        function callService() {
+            alert('Имитация звонка в сервис...\n\nВ реальном приложении здесь будет вызов телефона.');
+        }
+        
+        // Простые утилиты
+        function showNotification(message) {
+            if (tg && tg.showAlert) {
+                tg.showAlert(message);
+            } else {
+                alert(message);
+            }
+        }
+    </script>
 </body>
 </html>
