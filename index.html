@@ -3,56 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoHelper 🚗</title>
+    <title>Auto Helper 🛠️</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <!-- Шапка -->
-        <header>
-            <h1>🚗 AutoHelper</h1>
-            <p>Твой умный помощник для авто</p>
+        <!-- Шапка с персональным помощником -->
+        <header class="hero">
+            <div class="avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h1><i class="fas fa-car"></i> Auto Helper</h1>
+            <p class="subtitle">Твой персональный авто-помощник</p>
+            <div class="status">
+                <span class="status-indicator active"></span>
+                <span class="status-text">Готов помочь</span>
+            </div>
         </header>
 
-        <!-- Основной контент -->
+        <!-- Быстрые действия -->
+        <section class="quick-actions">
+            <h2><i class="fas fa-bolt"></i> Быстрые действия</h2>
+            <div class="actions-grid">
+                <button class="action-btn" onclick="quickHelp()">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Что делать?</span>
+                    <small>Совет от помощника</small>
+                </button>
+
+                <button class="action-btn" onclick="checkUrgent()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Срочная проверка</span>
+                    <small>5 пунктов за 60 сек</small>
+                </button>
+
+                <button class="action-btn" onclick="findNearby()">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Помощь рядом</span>
+                    <small>Эвакуатор, сервис</small>
+                </button>
+
+                <button class="action-btn" onclick="askHelper()">
+                    <i class="fas fa-comments"></i>
+                    <span>Спросить помощника</span>
+                    <small>AI-консультация</small>
+                </button>
+            </div>
+        </section>
+
+        <!-- Основные функции помощника -->
         <main>
-            <div class="card" id="diagnostics">
-                <h2>🔍 Диагностика</h2>
-                <p>Проверь состояние авто</p>
-                <button onclick="runDiagnostics()">Запустить проверку</button>
+            <!-- Автоматическая диагностика -->
+            <div class="card assistant-card">
+                <div class="card-header">
+                    <i class="fas fa-stethoscope"></i>
+                    <h2>Умная диагностика</h2>
+                    <button class="small-btn" onclick="autoDiagnose()">
+                        <i class="fas fa-play"></i> Автопроверка
+                    </button>
+                </div>
+                <p>Помощник сам проверит основные системы</p>
+                <div class="assistant-message" id="assistant-message">
+                    <i class="fas fa-robot"></i>
+                    <p>Привет! Я готов проверить ваше авто. Нажмите "Автопроверка"!</p>
+                </div>
                 <div class="result" id="diagnostics-result"></div>
             </div>
 
-            <div class="card" id="services">
-                <h2>🔧 Найти сервис</h2>
-                <p>Лучшие мастерские рядом</p>
-                <button onclick="findServices()">Найти</button>
-                <div class="result" id="services-result"></div>
+            <!-- Рекомендации помощника -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <h2>Рекомендации помощника</h2>
+                </div>
+                <div class="recommendations" id="recommendations">
+                    <div class="recommendation">
+                        <i class="fas fa-oil-can"></i>
+                        <div>
+                            <strong>Заменить масло</strong>
+                            <p>Через 500 км • Помощник напомнит</p>
+                        </div>
+                        <button class="icon-btn" onclick="setReminder('Замена масла', 500)">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                    <div class="recommendation">
+                        <i class="fas fa-tire"></i>
+                        <div>
+                            <strong>Проверить давление в шинах</strong>
+                            <p>Рекомендуется еженедельно</p>
+                        </div>
+                        <button class="icon-btn" onclick="quickCheck('шины')">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="card" id="history">
-                <h2>📖 История авто</h2>
-                <p>Все ремонты в одном месте</p>
-                <button onclick="showHistory()">Открыть историю</button>
-                <div class="result" id="history-result"></div>
+            <!-- История общения с помощником -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-history"></i>
+                    <h2>История помощи</h2>
+                </div>
+                <div class="history-items" id="history-items">
+                    <div class="history-item">
+                        <i class="fas fa-check-circle success"></i>
+                        <span>Помощник провёл диагностику</span>
+                        <small>Сегодня, 10:30</small>
+                    </div>
+                    <div class="history-item">
+                        <i class="fas fa-bell reminder"></i>
+                        <span>Напоминание о ТО установлено</span>
+                        <small>Вчера, 15:45</small>
+                    </div>
+                </div>
+                <button class="secondary-btn" onclick="showFullHistory()">
+                    <i class="fas fa-scroll"></i> Полная история помощи
+                </button>
             </div>
 
-            <div class="card" id="reminders">
-                <h2>⏰ Напоминания</h2>
-                <p>Не пропусти важное</p>
-                <button onclick="setReminder()">Добавить напоминание</button>
+            <!-- Экстренная помощь -->
+            <div class="card emergency-card">
+                <div class="card-header">
+                    <i class="fas fa-life-ring"></i>
+                    <h2>Экстренная помощь</h2>
+                </div>
+                <p>Помощник всегда на связи</p>
+                <div class="emergency-buttons">
+                    <button class="emergency-btn" onclick="emergencyHelp('flat_tire')">
+                        <i class="fas fa-tire-flat"></i>
+                        Прокол колеса
+                    </button>
+                    <button class="emergency-btn" onclick="emergencyHelp('battery')">
+                        <i class="fas fa-car-battery"></i>
+                        Севший аккумулятор
+                    </button>
+                    <button class="emergency-btn" onclick="emergencyHelp('keys')">
+                        <i class="fas fa-key"></i>
+                        Ключи в авто
+                    </button>
+                </div>
             </div>
         </main>
 
-        <!-- Подвал -->
-        <footer>
-            <p>AutoHelper © 2025</p>
-            <p>Ваш авто — наша забота</p>
+        <!-- Панель помощника -->
+        <footer class="assistant-footer">
+            <div class="assistant-input">
+                <input type="text" id="helper-input" placeholder="Спросите помощника...">
+                <button onclick="askQuestion()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <p class="footer-text">
+                <i class="fas fa-shield-alt"></i> Auto Helper • Ваш надёжный помощник с 2024
+            </p>
         </footer>
     </div>
 
     <script src="app.js"></script>
 </body>
-
 </html>

@@ -1,181 +1,361 @@
 // Подключаемся к Telegram
 const tg = window.Telegram.WebApp;
 
-// Когда страница загрузилась
+// Инициализация помощника
 document.addEventListener('DOMContentLoaded', function() {
-    // Раскрываем на весь экран
+    // Настройка Telegram Web App
     tg.expand();
-    
-    // Меняем цвет фона Telegram
-    tg.setHeaderColor('#1a2980');
-    tg.setBackgroundColor('#1a2980');
-    
-    // Показываем кнопку внизу
-    tg.MainButton.setText('Открыть меню').show();
-    
-    // Приветствие
-    //showNotification('AutoHelper готов помочь с вашим авто! 🚗');
+    tg.setHeaderColor('#0f1b3d');
+    tg.setBackgroundColor('#0f1b3d');
+    tg.MainButton.setText('Позвать помощника').show();
+
+    // Приветствие от помощника
+    setTimeout(() => {
+        showAssistantMessage('Привет! Я ваш персональный авто-помощник. Готов помочь с диагностикой, ремонтом и обслуживанием вашего автомобиля! 🚗💡');
+    }, 1000);
+
+    // Загружаем сохранённые данные
+    loadUserData();
 });
 
-// 1. Функция диагностики
-function runDiagnostics() {
+// 1. Умная диагностика
+function autoDiagnose() {
     const resultDiv = document.getElementById('diagnostics-result');
-    
-    // Показываем анимацию загрузки
-    resultDiv.innerHTML = '<p>🔍 Проверяем системы автомобиля...</p>';
-    resultDiv.style.display = 'block';
-    
-    // Имитируем проверку (в реальности тут запрос к API)
-    setTimeout(() => {
+    const assistantMsg = document.getElementById('assistant-message');
+
+    assistantMsg.innerHTML = `
+        <i class="fas fa-robot"></i>
+        <p>🔍 Помощник проводит комплексную диагностику... <span class="loading"></span></p>
+    `;
+
+    resultDiv.innerHTML = '';
+    resultDiv.style.display = 'none';
+
+    // Имитация процесса диагностики
+    const steps = [
+        {text: 'Проверяю двигатель...', delay: 800},
+        {text: 'Анализирую систему зажигания...', delay: 700},
+        {text: 'Проверяю тормозную систему...', delay: 600},
+        {text: 'Диагностирую электронику...', delay: 500},
+        {text: 'Анализ завершён!', delay: 400}
+    ];
+
+    let currentStep = 0;
+
+    function nextStep() {
+        if (currentStep < steps.length) {
+            assistantMsg.innerHTML = `
+                <i class="fas fa-robot"></i>
+                <p>${steps[currentStep].text}</p>
+            `;
+            currentStep++;
+            setTimeout(nextStep, steps[currentStep - 1].delay);
+        } else {
+            showResults();
+        }
+    }
+
+    nextStep();
+
+    function showResults() {
         const diagnostics = [
-            { system: 'Двигатель', status: '✅ Отличное состояние', icon: '⚙️' },
-            { system: 'Тормоза', status: '✅ Нормальный износ', icon: '🛑' },
-            { system: 'Аккумулятор', status: '⚠️ Заряд 75%', icon: '🔋' },
-            { system: 'Шины', status: '✅ Давление в норме', icon: '🛞' },
-            { system: 'Масло', status: '✅ Замена через 3000 км', icon: '🛢️' }
+            { system: 'Двигатель', status: '✅ Отличное состояние', icon: '⚙️', score: 95 },
+            { system: 'Тормоза', status: '✅ Нормальный износ', icon: '🛑', score: 88 },
+            { system: 'Аккумулятор', status: '⚠️ Требуется подзарядка', icon: '🔋', score: 65 },
+            { system: 'Шины', status: '✅ Давление оптимальное', icon: '🛞', score: 92 },
+            { system: 'Масло', status: '✅ Замена через 500 км', icon: '🛢️', score: 90 }
         ];
-        
-        let html = '<h3>Результаты диагностики:</h3>';
+
+        let html = '<div class="diagnosis-report">';
+        html += '<h3><i class="fas fa-clipboard-check"></i> Отчёт помощника</h3>';
+
         diagnostics.forEach(item => {
-            html += `<div class="diagnostic-item">
-                        <span>${item.icon} ${item.system}:</span>
+            html += `
+                <div class="diagnostic-item">
+                    <span class="diag-icon">${item.icon}</span>
+                    <div class="diag-info">
+                        <strong>${item.system}</strong>
                         <span>${item.status}</span>
-                     </div>`;
+                    </div>
+                    <div class="diag-score">
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${item.score}%"></div>
+                        </div>
+                        <span>${item.score}%</span>
+                    </div>
+                </div>
+            `;
         });
-        
-        html += '<p><small>Рекомендация: Проверьте аккумулятор на следующей неделе</small></p>';
-        
+
+        html += `
+            <div class="assistant-recommendation">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Рекомендация помощника:</strong>
+                    <p>Аккумулятор требует внимания. Рекомендую зарядить на станции в течение недели.</p>
+                </div>
+            </div>
+        `;
+
+        html += '</div>';
+
         resultDiv.innerHTML = html;
-        
-        // Показываем уведомление в Telegram
-       // showNotification('Диагностика завершена! Проверьте результаты.');
+        resultDiv.style.display = 'block';
+
+        assistantMsg.innerHTML = `
+            <i class="fas fa-robot"></i>
+            <p>Диагностика завершена! Ваш автомобиль в хорошем состоянии, но есть рекомендации по аккумулятору. 📋</p>
+        `;
+
+        // Добавляем в историю
+        addHistoryItem('Помощник провёл комплексную диагностику', 'success');
+
+        // Уведомление
+        tg.showAlert('Диагностика завершена! Проверьте рекомендации помощника.');
+    }
+}
+
+// 2. Быстрые действия помощника
+function quickHelp() {
+    const tips = [
+        "🎯 Совет помощника: Проверьте давление в шинах раз в неделю",
+        "🔧 Рекомендация: Замена масла каждые 10,000 км продлит жизнь двигателя",
+        "💡 Подсказка: Зимой прогревайте авто 2-3 минуты перед поездкой",
+        "⚠️ Важно: При появлении странных звуков сразу к диагносту"
+    ];
+
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    showAssistantMessage(randomTip);
+    addHistoryItem('Помощник дал совет', 'info');
+}
+
+function checkUrgent() {
+    showAssistantMessage('Помощник проводит срочную проверку...');
+
+    setTimeout(() => {
+        const urgentChecks = [
+            '✅ Уровень масла: в норме',
+            '✅ Давление в шинах: 2.3 бар',
+            '✅ Стеклоомыватель: достаточно',
+            '✅ Фары: работают',
+            '⚠️ Щётки стеклоочистителя: скоро менять'
+        ];
+
+        let message = 'Срочная проверка завершена:\n';
+        urgentChecks.forEach(check => {
+            message += `\n${check}`;
+        });
+
+        showAssistantMessage(message);
+        addHistoryItem('Помощник провёл срочную проверку', 'success');
+    }, 2000);
+}
+
+function findNearby() {
+    showAssistantMessage('Ищу помощь рядом с вами...');
+
+    setTimeout(() => {
+        const services = [
+            {type: '🚗 Эвакуатор', distance: '3 км', phone: '+7 (XXX) XXX-XX-XX'},
+            {type: '🔧 Экстренный сервис', distance: '2.5 км', phone: '+7 (XXX) XXX-XX-XX'},
+            {type: '⛽ Круглосуточная заправка', distance: '1 км', phone: '+7 (XXX) XXX-XX-XX'}
+        ];
+
+        let message = 'Помощь рядом:\n';
+        services.forEach(service => {
+            message += `\n${service.type} • ${service.distance}\n${service.phone}\n`;
+        });
+
+        showAssistantMessage(message);
+        tg.showAlert('Помощник нашёл службы рядом. Номера телефонов доступны в чате.');
     }, 1500);
 }
 
-// 2. Поиск сервисов
-function findServices() {
-    const resultDiv = document.getElementById('services-result');
-    resultDiv.innerHTML = '<p>🔎 Ищем лучшие сервисы рядом...</p>';
-    resultDiv.style.display = 'block';
-    
+// 3. Общение с помощником
+function askHelper() {
+    const question = prompt('Что вы хотите спросить у помощника?');
+
+    if (question) {
+        showAssistantMessage('🤔 Думаю над вашим вопросом...');
+
+        setTimeout(() => {
+            const responses = {
+                'масло': 'Рекомендую синтетическое масло 5W-30, менять каждые 10,000 км',
+                'шины': 'Летние шины менять при износе протектора менее 1.6 мм',
+                'аккумулятор': 'Заряжайте аккумулятор каждые 3 месяца, особенно зимой',
+                'тормоза': 'Тормозные колодки меняйте при толщине менее 3 мм'
+            };
+
+            let response = "Как помощник, рекомендую обратиться к профессиональному механику для точного ответа.";
+
+            for (const [key, value] of Object.entries(responses)) {
+                if (question.toLowerCase().includes(key)) {
+                    response = value;
+                    break;
+                }
+            }
+
+            showAssistantMessage(response);
+            addHistoryItem('Вы спросили помощника: ' + question.substring(0, 30) + '...', 'chat');
+        }, 2000);
+    }
+}
+
+function askQuestion() {
+    const input = document.getElementById('helper-input');
+    if (input.value.trim()) {
+        askHelperWithInput(input.value);
+        input.value = '';
+    }
+}
+
+function askHelperWithInput(question) {
+    showAssistantMessage('Анализирую ваш вопрос...');
+
     setTimeout(() => {
-        const services = [
-            { name: '🚗 Авто-Профи', distance: '1.2 км', rating: '4.8 ★', price: 'Средние' },
-            { name: '🔧 Быстрый Ремонт', distance: '2.5 км', rating: '4.6 ★', price: 'Низкие' },
-            { name: '⭐ Премиум Сервис', distance: '3.1 км', rating: '4.9 ★', price: 'Высокие' }
-        ];
-        
-        let html = '<h3>Найденные сервисы:</h3>';
-        services.forEach(service => {
-            html += `<div class="service-card">
-                        <strong>${service.name}</strong><br>
-                        📍 ${service.distance} | ${service.rating}<br>
-                        💰 Цены: ${service.price}
-                     </div>`;
-        });
-        
-        html += '<button onclick="bookService()" style="margin-top: 10px;">Записаться онлайн</button>';
-        
-        resultDiv.innerHTML = html;
-    }, 1200);
-}
+        // Простые ответы помощника
+        let response = "Понял ваш вопрос! Как авто-помощник, рекомендую: ";
 
-// 3. История автомобиля
-function showHistory() {
-    const resultDiv = document.getElementById('history-result');
-    resultDiv.style.display = 'block';
-    
-    const history = [
-        { date: '15.10.2023', service: 'Замена масла и фильтров', cost: '5000 ₽' },
-        { date: '22.08.2023', service: 'Замена тормозных колодок', cost: '12000 ₽' },
-        { date: '10.05.2023', service: 'Техническое обслуживание', cost: '15000 ₽' },
-        { date: '01.02.2023', service: 'Замена аккумулятора', cost: '8000 ₽' }
-    ];
-    
-    let html = '<h3>📅 История обслуживания:</h3>';
-    history.forEach(record => {
-        html += `<div class="history-record">
-                    <strong>${record.date}</strong><br>
-                    ${record.service}<br>
-                    <em>${record.cost}</em>
-                 </div>`;
-    });
-    
-    html += '<p>Общие затраты: 40,000 ₽</p>';
-    
-    resultDiv.innerHTML = html;
-}
-
-// 4. Напоминания
-function setReminder() {
-    const reminderText = prompt('О чём напомнить? Например: "Заменить масло"');
-    
-    if (reminderText) {
-        const date = prompt('Когда напомнить? (через сколько дней)');
-        
-        if (date && !isNaN(date)) {
-            showNotification(`Напоминание установлено! Напомним через ${date} дней.`);
-            
-            // В реальном приложении тут сохранение в базу данных
-            tg.showPopup({
-                title: 'Напоминание создано',
-                message: `"${reminderText}"\nЧерез ${date} дней`,
-                buttons: [{ type: 'ok' }]
-            });
+        if (question.includes('почему') && question.includes('шум')) {
+            response = "Шум может быть вызван износом подшипников, тормозных колодок или проблемами с выхлопной системой. Рекомендую диагностику в сервисе.";
+        } else if (question.includes('стоит') && question.includes('ремонт')) {
+            response = "Стоимость зависит от марки авто и сложности работ. Помощник может найти для вас несколько сервисов с ценами.";
+        } else if (question.includes('выбрать') && question.includes('шины')) {
+            response = "Выбирайте шины по сезону, индексу скорости и нагрузке. Для вашего региона рекомендую всесезонные шины.";
+        } else {
+            response = "Для точного ответа мне нужно больше информации. Опишите проблему детальнее или используйте функцию диагностики.";
         }
-    }
+
+        showAssistantMessage(response);
+        addHistoryItem('Диалог с помощником', 'chat');
+    }, 1500);
 }
 
-// 5. Бронирование сервиса
-function bookService() {
-    tg.showPopup({
-        title: '🎉 Запись на сервис',
-        message: 'Выберите удобное время:',
-        buttons: [
-            { id: 'morning', text: 'Утро (9:00-12:00)' },
-            { id: 'afternoon', text: 'День (12:00-17:00)' },
-            { id: 'evening', text: 'Вечер (17:00-20:00)' },
-            { type: 'cancel' }
-        ]
-    });
-    
-    tg.onEvent('popupClosed', (data) => {
-        if (data.button_id && data.button_id !== 'cancel') {
-            showNotification('Запись подтверждена! Ожидайте СМС.');
+// 4. Экстренная помощь
+function emergencyHelp(type) {
+    const solutions = {
+        'flat_tire': {
+            title: 'Прокол колеса',
+            steps: [
+                '1. Включите аварийную сигнализацию',
+                '2. Установите знак аварийной остановки',
+                '3. Замените колесо на запаску',
+                '4. Если нет запаски - вызывайте эвакуатор'
+            ],
+            phone: '+7 (XXX) XXX-XX-XX (Эвакуатор)'
+        },
+        'battery': {
+            title: 'Севший аккумулятор',
+            steps: [
+                '1. Найдите автомобиль-донор',
+                '2. Соедините клеммы проводами для прикуривания',
+                '3. Заведите двигатель',
+                '4. Дайте поработать 15-20 минут'
+            ],
+            phone: '+7 (XXX) XXX-XX-XX (Техпомощь)'
+        },
+        'keys': {
+            title: 'Ключи в авто',
+            steps: [
+                '1. Не пытайтесь разбить стекло',
+                '2. Вызовите службу вскрытия авто',
+                '3. Или обратитесь к официальному дилеру',
+                '4. Имейте дубликат ключей в будущем'
+            ],
+            phone: '+7 (XXX) XXX-XX-XX (Вскрытие авто)'
         }
-    });
+    };
+
+    const solution = solutions[type];
+
+    let message = `🚨 ПОМОЩЬ: ${solution.title}\n\n`;
+    message += solution.steps.join('\n');
+    message += `\n\n📞 Экстренный номер:\n${solution.phone}`;
+
+    showAssistantMessage(message);
+    tg.showAlert('Помощник предоставил инструкцию по экстренной ситуации!');
+    addHistoryItem('Экстренная помощь: ' + solution.title, 'emergency');
 }
 
-// Вспомогательная функция для уведомлений
-function showNotification(message) {
-    // Если в Telegram есть Haptic Feedback, используем его
-    if (tg.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred('light');
-    }
-    
-    // Простое уведомление
-    alert(message);
+// 5. Вспомогательные функции
+function showAssistantMessage(message) {
+    const assistantMsg = document.getElementById('assistant-message');
+    assistantMsg.innerHTML = `
+        <i class="fas fa-robot"></i>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+    `;
 }
 
-// Добавляем стили для динамических элементов через JS
-const style = document.createElement('style');
-style.textContent = `
-    .diagnostic-item, .service-card, .history-record {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 10px;
-        margin: 8px 0;
-        border-radius: 8px;
-        border-left: 4px solid #4FC3F7;
-    }
-    
-    .service-card {
-        border-left-color: #FFD700;
-    }
-    
-    .history-record {
-        border-left-color: #FF416C;
-    }
-`;
+function addHistoryItem(text, type) {
+    const historyItems = document.getElementById('history-items');
+    const icon = type === 'success' ? 'check-circle' :
+                 type === 'emergency' ? 'exclamation-triangle' :
+                 type === 'chat' ? 'comments' : 'info-circle';
 
-document.head.appendChild(style);
+    const now = new Date();
+    const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML = `
+        <i class="fas fa-${icon} ${type}"></i>
+        <span>${text}</span>
+        <small>Сегодня, ${time}</small>
+    `;
+
+    historyItems.prepend(item);
+
+    // Ограничиваем количество записей
+    const items = historyItems.querySelectorAll('.history-item');
+    if (items.length > 5) {
+        items[items.length - 1].remove();
+    }
+}
+
+function setReminder(task, km) {
+    showAssistantMessage(`Напоминание установлено: "${task}" через ${km} км. Помощник напомнит вовремя! ⏰`);
+    addHistoryItem('Напоминание: ' + task, 'reminder');
+    tg.HapticFeedback.impactOccurred('medium');
+}
+
+function quickCheck(type) {
+    showAssistantMessage(`Проверяю ${type}...`);
+
+    setTimeout(() => {
+        const checks = {
+            'шины': '✅ Давление в шинах: 2.3 бар (в норме)',
+            'масло': '✅ Уровень масла: между метками MIN и MAX',
+            'тормоза': '✅ Тормозная жидкость: уровень нормальный',
+            'аккумулятор': '⚠️ Напряжение: 12.3В (требует подзарядки)'
+        };
+
+        showAssistantMessage(checks[type] || 'Проверка выполнена');
+        addHistoryItem('Быстрая проверка: ' + type, 'info');
+    }, 1000);
+}
+
+function showFullHistory() {
+    showAssistantMessage('Полная история помощи доступна в разделе "История" вверху. Там все мои рекомендации и ваши действия! 📚');
+}
+
+// Загрузка данных пользователя
+function loadUserData() {
+    // В будущем здесь будет загрузка из базы данных
+    console.log('Данные пользователя загружены');
+}
+
+// Добавляем CSS для новых элементов
+const additionalStyles = `
+    .loading:after {
+        content: '...';
+        animation: dots 1.5s infinite;
+    }
+
+    @keyframes dots {
+        0%, 20% { content: '.'; }
+        40% { content: '..'; }
+        60%, 100% { content: '...'; }
+    }
+
+    .diagnosis-report {
+        background: rgba(0, 0, 0
