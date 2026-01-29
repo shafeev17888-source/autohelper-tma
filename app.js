@@ -8,29 +8,39 @@ document.addEventListener('DOMContentLoaded', function() {
     tg.setHeaderColor('#0f1b3d');
     tg.setBackgroundColor('#0f1b3d');
     tg.MainButton.setText('Позвать помощника').show();
-
+    
     // Приветствие от помощника
     setTimeout(() => {
         showAssistantMessage('Привет! Я ваш персональный авто-помощник. Готов помочь с диагностикой, ремонтом и обслуживанием вашего автомобиля! 🚗💡');
     }, 1000);
-
+    
     // Загружаем сохранённые данные
     loadUserData();
+    
+    // Назначаем обработчик на Enter в поле ввода
+    const inputField = document.getElementById('helper-input');
+    if (inputField) {
+        inputField.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                askQuestion();
+            }
+        });
+    }
 });
 
 // 1. Умная диагностика
 function autoDiagnose() {
     const resultDiv = document.getElementById('diagnostics-result');
     const assistantMsg = document.getElementById('assistant-message');
-
+    
     assistantMsg.innerHTML = `
         <i class="fas fa-robot"></i>
         <p>🔍 Помощник проводит комплексную диагностику... <span class="loading"></span></p>
     `;
-
+    
     resultDiv.innerHTML = '';
     resultDiv.style.display = 'none';
-
+    
     // Имитация процесса диагностики
     const steps = [
         {text: 'Проверяю двигатель...', delay: 800},
@@ -39,9 +49,9 @@ function autoDiagnose() {
         {text: 'Диагностирую электронику...', delay: 500},
         {text: 'Анализ завершён!', delay: 400}
     ];
-
+    
     let currentStep = 0;
-
+    
     function nextStep() {
         if (currentStep < steps.length) {
             assistantMsg.innerHTML = `
@@ -54,9 +64,9 @@ function autoDiagnose() {
             showResults();
         }
     }
-
+    
     nextStep();
-
+    
     function showResults() {
         const diagnostics = [
             { system: 'Двигатель', status: '✅ Отличное состояние', icon: '⚙️', score: 95 },
@@ -65,10 +75,10 @@ function autoDiagnose() {
             { system: 'Шины', status: '✅ Давление оптимальное', icon: '🛞', score: 92 },
             { system: 'Масло', status: '✅ Замена через 500 км', icon: '🛢️', score: 90 }
         ];
-
+        
         let html = '<div class="diagnosis-report">';
         html += '<h3><i class="fas fa-clipboard-check"></i> Отчёт помощника</h3>';
-
+        
         diagnostics.forEach(item => {
             html += `
                 <div class="diagnostic-item">
@@ -86,7 +96,7 @@ function autoDiagnose() {
                 </div>
             `;
         });
-
+        
         html += `
             <div class="assistant-recommendation">
                 <i class="fas fa-lightbulb"></i>
@@ -96,20 +106,20 @@ function autoDiagnose() {
                 </div>
             </div>
         `;
-
+        
         html += '</div>';
-
+        
         resultDiv.innerHTML = html;
         resultDiv.style.display = 'block';
-
+        
         assistantMsg.innerHTML = `
             <i class="fas fa-robot"></i>
             <p>Диагностика завершена! Ваш автомобиль в хорошем состоянии, но есть рекомендации по аккумулятору. 📋</p>
         `;
-
+        
         // Добавляем в историю
         addHistoryItem('Помощник провёл комплексную диагностику', 'success');
-
+        
         // Уведомление
         tg.showAlert('Диагностика завершена! Проверьте рекомендации помощника.');
     }
@@ -123,7 +133,7 @@ function quickHelp() {
         "💡 Подсказка: Зимой прогревайте авто 2-3 минуты перед поездкой",
         "⚠️ Важно: При появлении странных звуков сразу к диагносту"
     ];
-
+    
     const randomTip = tips[Math.floor(Math.random() * tips.length)];
     showAssistantMessage(randomTip);
     addHistoryItem('Помощник дал совет', 'info');
@@ -131,7 +141,7 @@ function quickHelp() {
 
 function checkUrgent() {
     showAssistantMessage('Помощник проводит срочную проверку...');
-
+    
     setTimeout(() => {
         const urgentChecks = [
             '✅ Уровень масла: в норме',
@@ -140,12 +150,12 @@ function checkUrgent() {
             '✅ Фары: работают',
             '⚠️ Щётки стеклоочистителя: скоро менять'
         ];
-
+        
         let message = 'Срочная проверка завершена:\n';
         urgentChecks.forEach(check => {
             message += `\n${check}`;
         });
-
+        
         showAssistantMessage(message);
         addHistoryItem('Помощник провёл срочную проверку', 'success');
     }, 2000);
@@ -153,19 +163,19 @@ function checkUrgent() {
 
 function findNearby() {
     showAssistantMessage('Ищу помощь рядом с вами...');
-
+    
     setTimeout(() => {
         const services = [
-            {type: '🚗 Эвакуатор', distance: '3 км', phone: '+7 (XXX) XXX-XX-XX'},
-            {type: '🔧 Экстренный сервис', distance: '2.5 км', phone: '+7 (XXX) XXX-XX-XX'},
-            {type: '⛽ Круглосуточная заправка', distance: '1 км', phone: '+7 (XXX) XXX-XX-XX'}
+            {type: '🚗 Эвакуатор', distance: '3 км', phone: '+7 (123) 456-78-90'},
+            {type: '🔧 Экстренный сервис', distance: '2.5 км', phone: '+7 (234) 567-89-01'},
+            {type: '⛽ Круглосуточная заправка', distance: '1 км', phone: '+7 (345) 678-90-12'}
         ];
-
+        
         let message = 'Помощь рядом:\n';
         services.forEach(service => {
             message += `\n${service.type} • ${service.distance}\n${service.phone}\n`;
         });
-
+        
         showAssistantMessage(message);
         tg.showAlert('Помощник нашёл службы рядом. Номера телефонов доступны в чате.');
     }, 1500);
@@ -174,10 +184,10 @@ function findNearby() {
 // 3. Общение с помощником
 function askHelper() {
     const question = prompt('Что вы хотите спросить у помощника?');
-
+    
     if (question) {
         showAssistantMessage('🤔 Думаю над вашим вопросом...');
-
+        
         setTimeout(() => {
             const responses = {
                 'масло': 'Рекомендую синтетическое масло 5W-30, менять каждые 10,000 км',
@@ -185,16 +195,16 @@ function askHelper() {
                 'аккумулятор': 'Заряжайте аккумулятор каждые 3 месяца, особенно зимой',
                 'тормоза': 'Тормозные колодки меняйте при толщине менее 3 мм'
             };
-
+            
             let response = "Как помощник, рекомендую обратиться к профессиональному механику для точного ответа.";
-
+            
             for (const [key, value] of Object.entries(responses)) {
                 if (question.toLowerCase().includes(key)) {
                     response = value;
                     break;
                 }
             }
-
+            
             showAssistantMessage(response);
             addHistoryItem('Вы спросили помощника: ' + question.substring(0, 30) + '...', 'chat');
         }, 2000);
@@ -203,7 +213,7 @@ function askHelper() {
 
 function askQuestion() {
     const input = document.getElementById('helper-input');
-    if (input.value.trim()) {
+    if (input && input.value.trim()) {
         askHelperWithInput(input.value);
         input.value = '';
     }
@@ -211,11 +221,11 @@ function askQuestion() {
 
 function askHelperWithInput(question) {
     showAssistantMessage('Анализирую ваш вопрос...');
-
+    
     setTimeout(() => {
         // Простые ответы помощника
         let response = "Понял ваш вопрос! Как авто-помощник, рекомендую: ";
-
+        
         if (question.includes('почему') && question.includes('шум')) {
             response = "Шум может быть вызван износом подшипников, тормозных колодок или проблемами с выхлопной системой. Рекомендую диагностику в сервисе.";
         } else if (question.includes('стоит') && question.includes('ремонт')) {
@@ -225,7 +235,7 @@ function askHelperWithInput(question) {
         } else {
             response = "Для точного ответа мне нужно больше информации. Опишите проблему детальнее или используйте функцию диагностики.";
         }
-
+        
         showAssistantMessage(response);
         addHistoryItem('Диалог с помощником', 'chat');
     }, 1500);
@@ -242,7 +252,7 @@ function emergencyHelp(type) {
                 '3. Замените колесо на запаску',
                 '4. Если нет запаски - вызывайте эвакуатор'
             ],
-            phone: '+7 (XXX) XXX-XX-XX (Эвакуатор)'
+            phone: '+7 (123) 456-78-90 (Эвакуатор)'
         },
         'battery': {
             title: 'Севший аккумулятор',
@@ -252,7 +262,7 @@ function emergencyHelp(type) {
                 '3. Заведите двигатель',
                 '4. Дайте поработать 15-20 минут'
             ],
-            phone: '+7 (XXX) XXX-XX-XX (Техпомощь)'
+            phone: '+7 (234) 567-89-01 (Техпомощь)'
         },
         'keys': {
             title: 'Ключи в авто',
@@ -262,16 +272,16 @@ function emergencyHelp(type) {
                 '3. Или обратитесь к официальному дилеру',
                 '4. Имейте дубликат ключей в будущем'
             ],
-            phone: '+7 (XXX) XXX-XX-XX (Вскрытие авто)'
+            phone: '+7 (345) 678-90-12 (Вскрытие авто)'
         }
     };
-
+    
     const solution = solutions[type];
-
+    
     let message = `🚨 ПОМОЩЬ: ${solution.title}\n\n`;
     message += solution.steps.join('\n');
     message += `\n\n📞 Экстренный номер:\n${solution.phone}`;
-
+    
     showAssistantMessage(message);
     tg.showAlert('Помощник предоставил инструкцию по экстренной ситуации!');
     addHistoryItem('Экстренная помощь: ' + solution.title, 'emergency');
@@ -280,21 +290,25 @@ function emergencyHelp(type) {
 // 5. Вспомогательные функции
 function showAssistantMessage(message) {
     const assistantMsg = document.getElementById('assistant-message');
-    assistantMsg.innerHTML = `
-        <i class="fas fa-robot"></i>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-    `;
+    if (assistantMsg) {
+        assistantMsg.innerHTML = `
+            <i class="fas fa-robot"></i>
+            <p>${message.replace(/\n/g, '<br>')}</p>
+        `;
+    }
 }
 
 function addHistoryItem(text, type) {
     const historyItems = document.getElementById('history-items');
-    const icon = type === 'success' ? 'check-circle' :
-                 type === 'emergency' ? 'exclamation-triangle' :
+    if (!historyItems) return;
+    
+    const icon = type === 'success' ? 'check-circle' : 
+                 type === 'emergency' ? 'exclamation-triangle' : 
                  type === 'chat' ? 'comments' : 'info-circle';
-
+    
     const now = new Date();
     const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-
+    
     const item = document.createElement('div');
     item.className = 'history-item';
     item.innerHTML = `
@@ -302,9 +316,9 @@ function addHistoryItem(text, type) {
         <span>${text}</span>
         <small>Сегодня, ${time}</small>
     `;
-
+    
     historyItems.prepend(item);
-
+    
     // Ограничиваем количество записей
     const items = historyItems.querySelectorAll('.history-item');
     if (items.length > 5) {
@@ -315,12 +329,14 @@ function addHistoryItem(text, type) {
 function setReminder(task, km) {
     showAssistantMessage(`Напоминание установлено: "${task}" через ${km} км. Помощник напомнит вовремя! ⏰`);
     addHistoryItem('Напоминание: ' + task, 'reminder');
-    tg.HapticFeedback.impactOccurred('medium');
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('medium');
+    }
 }
 
 function quickCheck(type) {
     showAssistantMessage(`Проверяю ${type}...`);
-
+    
     setTimeout(() => {
         const checks = {
             'шины': '✅ Давление в шинах: 2.3 бар (в норме)',
@@ -328,7 +344,7 @@ function quickCheck(type) {
             'тормоза': '✅ Тормозная жидкость: уровень нормальный',
             'аккумулятор': '⚠️ Напряжение: 12.3В (требует подзарядки)'
         };
-
+        
         showAssistantMessage(checks[type] || 'Проверка выполнена');
         addHistoryItem('Быстрая проверка: ' + type, 'info');
     }, 1000);
@@ -345,17 +361,116 @@ function loadUserData() {
 }
 
 // Добавляем CSS для новых элементов
-const additionalStyles = `
+const additionalStyles = document.createElement('style');
+additionalStyles.textContent = `
     .loading:after {
         content: '...';
         animation: dots 1.5s infinite;
     }
-
+    
     @keyframes dots {
         0%, 20% { content: '.'; }
         40% { content: '..'; }
         60%, 100% { content: '...'; }
     }
-
+    
     .diagnosis-report {
-        background: rgba(0, 0, 0
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .diagnostic-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .diagnostic-item:last-child {
+        border-bottom: none;
+    }
+    
+    .diag-icon {
+        font-size: 24px;
+        width: 40px;
+        text-align: center;
+    }
+    
+    .diag-info {
+        flex-grow: 1;
+        margin-left: 15px;
+    }
+    
+    .diag-info strong {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    
+    .diag-info span {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .diag-score {
+        text-align: right;
+        min-width: 80px;
+    }
+    
+    .score-bar {
+        width: 60px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 4px;
+    }
+    
+    .score-fill {
+        height: 100%;
+        background: linear-gradient(to right, #00c853, #64dd17);
+        border-radius: 4px;
+    }
+    
+    .assistant-recommendation {
+        background: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .assistant-recommendation i {
+        color: #ffc107;
+        font-size: 20px;
+        margin-top: 2px;
+    }
+    
+    .assistant-recommendation p {
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+`;
+
+document.head.appendChild(additionalStyles);
+
+// Обработчики для кнопок в рекомендациях
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.icon-btn')) {
+        const btn = event.target.closest('.icon-btn');
+        if (btn.querySelector('.fa-bell')) {
+            const task = btn.closest('.recommendation').querySelector('strong').textContent;
+            const km = 500; // можно сделать динамическим
+            setReminder(task, km);
+        } else if (btn.querySelector('.fa-check')) {
+            const type = btn.closest('.recommendation').querySelector('strong').textContent.toLowerCase();
+            if (type.includes('шины')) quickCheck('шины');
+            else if (type.includes('масло')) quickCheck('масло');
+        }
+    }
+});
