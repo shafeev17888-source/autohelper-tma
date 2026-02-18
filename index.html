@@ -87,8 +87,8 @@
         }
 
         body.night-theme .bottom-nav {
-            background: #1a1a1a;
-            border-top-color: #333;
+            background: rgba(26, 26, 26, 0.7);
+            border-top-color: rgba(255, 255, 255, 0.05);
         }
 
         body.night-theme .nav-item {
@@ -456,25 +456,32 @@
             transform: translateY(0);
         }
 
-        /* Нижняя навигация - полупрозрачная и с анимацией */
+        /* Нижняя навигация - более прозрачная с обводкой */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-left: 1px solid rgba(0, 0, 0, 0.03);
+            border-right: 1px solid rgba(0, 0, 0, 0.03);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
             padding: 8px 16px 16px;
             display: flex;
             justify-content: space-around;
             z-index: 100;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.02);
         }
 
         body.night-theme .bottom-nav {
-            background: rgba(26, 26, 26, 0.85);
-            border-top-color: rgba(255, 255, 255, 0.05);
+            background: rgba(26, 26, 26, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 1px solid rgba(255, 255, 255, 0.03);
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .nav-item {
@@ -678,9 +685,12 @@
 
         .contact-value {
             font-size: 16px;
-            font-weight: 500;
-            font-family: monospace;
-            letter-spacing: 0.5px;
+            font-weight: 700; /* Жирный текст */
+            color: #000;
+        }
+
+        body.night-theme .contact-value {
+            color: #fff;
         }
 
         .contact-action {
@@ -892,7 +902,7 @@
                     <div class="support-card">
                         <div class="support-title">Контакты</div>
                         
-                        <!-- Номер телефона - изменен стиль как у VK -->
+                        <!-- Номер телефона -->
                         <div class="contact-item" onclick="copyToClipboard('+79871494882')">
                             <div class="contact-icon">📞</div>
                             <div class="contact-info">
@@ -931,7 +941,7 @@
             </div>
         </div>
 
-        <!-- Нижняя навигация - полупрозрачная -->
+        <!-- Нижняя навигация - более прозрачная с обводкой -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="navigateToPage('home')">
                 <span>🏠</span>
