@@ -2,529 +2,664 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoHelper — умный помощник</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Auto Helper</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ======== СБРОС И ОСНОВНЫЕ СТИЛИ ======== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #ffffff;
-            color: #1a1a1a;
-            line-height: 1.5;
+            color: #000000;
+            min-height: 100vh;
+            padding: 16px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 24px;
         }
 
-        /* ======== ТИПОГРАФИЯ (крупная, чистая) ======== */
-        h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            margin-bottom: 2rem;
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-
-        .subtitle {
-            font-size: 1.25rem;
-            color: #666;
-            max-width: 600px;
-        }
-
-        /* ======== НАВИГАЦИЯ (простая) ======== */
-        .navbar {
-            padding: 1.5rem 0;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 4rem;
-        }
-
-        .nav-links {
+        /* Шапка */
+        .header {
             display: flex;
-            gap: 2.5rem;
             align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 24px;
             font-weight: 700;
-            color: #000;
-            margin-right: auto;
-        }
-
-        /* ======== ГЕРОЙ (чистый, с картинкой) ======== */
-        .hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            display: flex;
             align-items: center;
-            margin-bottom: 6rem;
+            gap: 8px;
         }
 
-        .hero-content {
-            padding-right: 2rem;
-        }
-
-        .hero-image {
-            width: 100%;
-            height: 400px;
-            background: #f5f5f5;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
-        }
-
-        /* МЕСТО ДЛЯ ТВОЕЙ КАРТИНКИ - ВСТАВЬ ССЫЛКУ */
-        .hero-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .badge {
-            display: inline-block;
+        .logo span {
             background: #000;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 100px;
-            font-size: 0.875rem;
-            margin-bottom: 2rem;
-        }
-
-        .button {
-            display: inline-block;
-            background: #000;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            margin-top: 2rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .button:hover {
-            background: #333;
-            transform: translateY(-2px);
-        }
-
-        .button.outline {
-            background: transparent;
-            color: #000;
-            border: 1px solid #ddd;
-            margin-left: 1rem;
-        }
-
-        .button.outline:hover {
-            background: #f5f5f5;
-        }
-
-        /* ======== СЕТКА ПРЕИМУЩЕСТВ (BENTO) ======== */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 24px;
-            margin: 4rem 0 6rem;
-        }
-
-        .feature-card {
-            background: #fafafa;
-            border-radius: 24px;
-            padding: 2rem;
-            transition: all 0.3s;
-            border: 1px solid #f0f0f0;
-        }
-
-        .feature-card:hover {
-            background: #fff;
-            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.1);
-            transform: translateY(-5px);
-        }
-
-        /* Расположение карточек */
-        .card-1 { grid-column: span 6; }
-        .card-2 { grid-column: span 6; }
-        .card-3 { grid-column: span 4; }
-        .card-4 { grid-column: span 4; }
-        .card-5 { grid-column: span 4; }
-        .card-6 { grid-column: span 12; }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-card p {
-            color: #666;
-            margin-top: 1rem;
-        }
-
-        /* ======== СЕКЦИЯ С ИЗОБРАЖЕНИЯМИ ======== */
-        .showcase {
-            margin: 6rem 0;
-        }
-
-        .showcase-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
-
-        .showcase-item {
-            background: #fafafa;
+            font-size: 12px;
+            padding: 4px 8px;
             border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 9/16;
-            border: 1px solid #f0f0f0;
+            font-weight: 400;
         }
 
-        /* МЕСТО ДЛЯ СКРИНШОТОВ TMA - ВСТАВЬ ССЫЛКИ */
-        .showcase-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .placeholder {
-            width: 100%;
-            height: 100%;
-            background: #f0f0f0;
+        .menu-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #999;
-            font-size: 0.9rem;
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        /* ======== СЕКЦИЯ С ЦИФРАМИ ======== */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
-            margin: 5rem 0;
-            padding: 3rem 0;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
+        /* Приветствие */
+        .welcome {
+            margin-bottom: 32px;
         }
 
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 3rem;
+        .welcome h1 {
+            font-size: 28px;
             font-weight: 700;
-            color: #000;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
-        .stat-label {
+        .welcome p {
             color: #666;
-            font-size: 1rem;
+            font-size: 16px;
         }
 
-        /* ======== CTA СЕКЦИЯ ======== */
-        .cta-section {
-            background: #000;
-            color: white;
-            padding: 5rem 3rem;
-            border-radius: 32px;
-            text-align: center;
-            margin: 6rem 0;
+        /* Основные функции (большие кнопки) */
+        .functions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
         }
 
-        .cta-section h2 {
-            color: white;
-            margin-bottom: 1.5rem;
+        .function-card {
+            background: #f8f8f8;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid #f0f0f0;
+            transition: background 0.2s;
+            cursor: pointer;
         }
 
-        .cta-section p {
-            color: #aaa;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .cta-section .button {
-            background: white;
-            color: black;
-        }
-
-        .cta-section .button:hover {
+        .function-card:active {
             background: #f0f0f0;
         }
 
-        /* ======== ФУТЕР ======== */
-        .footer {
-            padding: 4rem 0;
-            border-top: 1px solid #eee;
+        .function-icon {
+            width: 48px;
+            height: 48px;
+            background: #000;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .function-info {
+            flex: 1;
+        }
+
+        .function-info h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .function-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .arrow {
+            color: #999;
+            font-size: 20px;
+        }
+
+        /* Секция с данными автомобиля */
+        .car-status {
+            background: #000;
+            color: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+
+        .car-status h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #999;
+        }
+
+        .status-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 3rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
 
-        .footer-col p {
-            color: #666;
-            margin-top: 1rem;
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .footer-links {
-            list-style: none;
+        .status-label {
+            font-size: 14px;
+            color: #999;
         }
 
-        .footer-links li {
-            margin-bottom: 0.75rem;
+        .status-value {
+            font-size: 16px;
+            font-weight: 600;
         }
 
-        .footer-links a {
+        .status-good {
+            color: #4cd964;
+        }
+
+        .status-warn {
+            color: #ffcc00;
+        }
+
+        /* Быстрые действия */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .quick-btn {
+            background: #f8f8f8;
+            border: 1px solid #f0f0f0;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .quick-btn:active {
+            background: #f0f0f0;
+        }
+
+        .quick-btn span {
+            font-size: 24px;
+        }
+
+        .quick-btn p {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* История */
+        .history {
+            margin-bottom: 32px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .history-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .history-header a {
+            color: #999;
             text-decoration: none;
+            font-size: 14px;
+        }
+
+        .history-item {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-date {
             color: #666;
+            font-size: 14px;
         }
 
-        .footer-links a:hover {
+        .history-title {
+            font-weight: 500;
+            margin: 4px 0;
+        }
+
+        .history-price {
             color: #000;
+            font-weight: 600;
         }
 
-        /* ======== АНИМАЦИИ ======== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+        .history-arrow {
+            color: #ccc;
+        }
+
+        /* Результаты (появляются после нажатия) */
+        .result-panel {
+            background: #f8f8f8;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+            display: none;
+            border-left: 4px solid #000;
+        }
+
+        .result-panel.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero, .feature-card, .showcase-item, .stat-item {
-            animation: fadeIn 0.6s ease-out forwards;
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 16px;
         }
 
-        .feature-card:nth-child(2) { animation-delay: 0.1s; }
-        .feature-card:nth-child(3) { animation-delay: 0.2s; }
-        .feature-card:nth-child(4) { animation-delay: 0.3s; }
-        .feature-card:nth-child(5) { animation-delay: 0.4s; }
-        .feature-card:nth-child(6) { animation-delay: 0.5s; }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
 
-        /* ======== АДАПТАЦИЯ ======== */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 2rem; }
-            
-            .hero {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .feature-card {
-                grid-column: span 1 !important;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .footer {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .showcase-grid {
-                grid-template-columns: 1fr;
-            }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            padding: 12px 16px 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #000;
+            font-weight: 500;
+        }
+
+        .nav-item span {
+            font-size: 22px;
+        }
+
+        /* Отступ для контента, чтобы не перекрывало навигацией */
+        .content {
+            padding-bottom: 80px;
+        }
+
+        /* Простая модалка для уведомлений */
+        .modal {
+            position: fixed;
+            bottom: 100px;
+            left: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .modal.show {
+            display: block;
+            animation: fadeIn 0.3s;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Навигация -->
-        <nav class="navbar">
-            <div class="nav-links">
-                <span class="logo">🚗 AutoHelper</span>
-                <a href="#">Возможности</a>
-                <a href="#">Как это работает</a>
-                <a href="#">Цены</a>
-                <a href="#">Блог</a>
+        <!-- Шапка -->
+        <div class="header">
+            <div class="logo">
+                🚗 AutoHelper
+                <span>TMA</span>
             </div>
-        </nav>
-
-        <!-- Hero секция -->
-        <section class="hero">
-            <div class="hero-content">
-                <span class="badge">Новая версия 2.0</span>
-                <h1>Умный помощник для вашего авто</h1>
-                <p class="subtitle">Диагностика, сервисы, история и контроль — всё в одном приложении. Работает прямо в Telegram.</p>
-                <div>
-                    <a href="#" class="button">Попробовать бесплатно</a>
-                    <a href="#" class="button outline">Смотреть демо</a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <!-- 👇 ВСТАВЬ СЮДА ССЫЛКУ НА КАРТИНКУ (например, фото машины или приложения) -->
-                <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&auto=format" alt="AutoHelper">
-                <!-- Пример ссылки выше — можно заменить на свою -->
-            </div>
-        </section>
-
-        <!-- Сетка преимуществ -->
-        <section>
-            <h2 style="margin-bottom: 1rem;">Всё для вашего авто</h2>
-            <p class="subtitle" style="margin-bottom: 3rem;">Комплексный подход к обслуживанию автомобиля</p>
-            
-            <div class="features-grid">
-                <!-- Карточка 1 -->
-                <div class="feature-card card-1">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Умная диагностика</h3>
-                    <p>Подключите OBD-адаптер и получите полный отчёт о состоянии всех систем автомобиля с понятными рекомендациями.</p>
-                </div>
-                
-                <!-- Карточка 2 -->
-                <div class="feature-card card-2">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Поиск сервисов</h3>
-                    <p>Находите проверенные автосервисы рядом. Реальные отзывы, цены и возможность онлайн-записи.</p>
-                </div>
-                
-                <!-- Карточка 3 -->
-                <div class="feature-card card-3">
-                    <div class="feature-icon">📊</div>
-                    <h3>История авто</h3>
-                    <p>Все ремонты, ТО и замены запчастей в цифровом виде. Ничего не потеряется.</p>
-                </div>
-                
-                <!-- Карточка 4 -->
-                <div class="feature-card card-4">
-                    <div class="feature-icon">🤖</div>
-                    <h3>AI-помощник</h3>
-                    <p>Задайте вопрос о любой проблеме — искусственный интеллект подскажет возможные причины.</p>
-                </div>
-                
-                <!-- Карточка 5 -->
-                <div class="feature-card card-5">
-                    <div class="feature-icon">⏰</div>
-                    <h3>Напоминания</h3>
-                    <p>Умные уведомления о ТО, замене масла и страховке на основе пробега и времени.</p>
-                </div>
-                
-                <!-- Карточка 6 -->
-                <div class="feature-card card-6">
-                    <div class="feature-icon">🚨</div>
-                    <h3>Экстренная помощь</h3>
-                    <p>Чёткие инструкции для любых ситуаций: прокол, севший аккумулятор, ДТП. Быстрый вызов эвакуатора.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Скриншоты приложения -->
-        <section class="showcase">
-            <h2 style="margin-bottom: 3rem;">Как это работает</h2>
-            <div class="showcase-grid">
-                <!-- 👇 ВСТАВЬ ССЫЛКИ НА СВОИ СКРИНШОТЫ TMA -->
-                <div class="showcase-item">
-                    <img src="https://via.placeholder.com/400x800?text=Скриншот+1" alt="Главный экран">
-                </div>
-                <div class="showcase-item">
-                    <img src="https://via.placeholder.com/400x800?text=Скриншот+2" alt="Диагностика">
-                </div>
-                <div class="showcase-item">
-                    <img src="https://via.placeholder.com/400x800?text=Скриншот+3" alt="История">
-                </div>
-            </div>
-        </section>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number">10k+</div>
-                <div class="stat-label">активных пользователей</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">50k+</div>
-                <div class="stat-label">диагностик проведено</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">4.8★</div>
-                <div class="stat-label">средняя оценка</div>
+            <div class="menu-button" onclick="showMenu()">
+                ☰
             </div>
         </div>
 
-        <!-- Призыв к действию -->
-        <div class="cta-section">
-            <h2>Начните использовать AutoHelper</h2>
-            <p>Установка не требуется — приложение работает прямо в Telegram. Просто нажмите кнопку и откройте бота.</p>
-            <a href="#" class="button">Открыть бота в Telegram</a>
+        <!-- Контент (с отступом для нижней навигации) -->
+        <div class="content">
+            <!-- Приветствие -->
+            <div class="welcome">
+                <h1>Привет,<br>владелец BMW X5</h1>
+                <p>Ваш автомобиль готов к поездке</p>
+            </div>
+
+            <!-- Статус авто -->
+            <div class="car-status">
+                <h2>Текущее состояние</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">Масло</span>
+                        <span class="status-value status-good">32% • 3200 км</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Тормоза</span>
+                        <span class="status-value status-good">85%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Аккумулятор</span>
+                        <span class="status-value status-warn">12.1V ⚠️</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Шины</span>
+                        <span class="status-value status-good">2.3 бар</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Основные функции -->
+            <div class="functions">
+                <!-- Диагностика -->
+                <div class="function-card" onclick="runDiagnostics()">
+                    <div class="function-icon">🔍</div>
+                    <div class="function-info">
+                        <h3>Диагностика</h3>
+                        <p>Проверить все системы</p>
+                    </div>
+                    <div class="arrow">›</div>
+                </div>
+                <!-- Результат диагностики -->
+                <div class="result-panel" id="diagnostics-result"></div>
+
+                <!-- Найти СТО -->
+                <div class="function-card" onclick="findServices()">
+                    <div class="function-icon">🔧</div>
+                    <div class="function-info">
+                        <h3>Найти СТО</h3>
+                        <p>Сервисы рядом с вами</p>
+                    </div>
+                    <div class="arrow">›</div>
+                </div>
+                <!-- Результат поиска СТО -->
+                <div class="result-panel" id="services-result"></div>
+
+                <!-- История -->
+                <div class="function-card" onclick="showHistory()">
+                    <div class="function-icon">📊</div>
+                    <div class="function-info">
+                        <h3>История</h3>
+                        <p>Все ремонты и ТО</p>
+                    </div>
+                    <div class="arrow">›</div>
+                </div>
+                <!-- Результат истории -->
+                <div class="result-panel" id="history-result"></div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+                <div class="quick-btn" onclick="checkOil()">
+                    <span>🛢️</span>
+                    <p>Масло</p>
+                </div>
+                <div class="quick-btn" onclick="checkTires()">
+                    <span>🛞</span>
+                    <p>Шины</p>
+                </div>
+                <div class="quick-btn" onclick="callTow()">
+                    <span>🚨</span>
+                    <p>Эвакуатор</p>
+                </div>
+                <div class="quick-btn" onclick="addReminder()">
+                    <span>⏰</span>
+                    <p>Напомнить</p>
+                </div>
+            </div>
+
+            <!-- Последние события -->
+            <div class="history">
+                <div class="history-header">
+                    <h3>Последние события</h3>
+                    <a href="#" onclick="showAllHistory(); return false;">Все</a>
+                </div>
+                <div class="history-item" onclick="showHistoryDetail('oil')">
+                    <div>
+                        <div class="history-date">15 марта 2024</div>
+                        <div class="history-title">Замена масла</div>
+                        <div class="history-price">5 900 ₽</div>
+                    </div>
+                    <div class="history-arrow">›</div>
+                </div>
+                <div class="history-item" onclick="showHistoryDetail('brakes')">
+                    <div>
+                        <div class="history-date">2 марта 2024</div>
+                        <div class="history-title">Колодки передние</div>
+                        <div class="history-price">4 500 ₽</div>
+                    </div>
+                    <div class="history-arrow">›</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Футер -->
-        <footer class="footer">
-            <div class="footer-col">
-                <span class="logo">🚗 AutoHelper</span>
-                <p>Умный помощник для автомобилистов © 2024</p>
+        <!-- Нижняя навигация -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('home')">
+                <span>🏠</span>
+                <span>Главная</span>
             </div>
-            <div class="footer-col">
-                <h4>Продукт</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Возможности</a></li>
-                    <li><a href="#">Цены</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
+            <div class="nav-item" onclick="switchTab('diagnostics')">
+                <span>🔍</span>
+                <span>Диагностика</span>
             </div>
-            <div class="footer-col">
-                <h4>Компания</h4>
-                <ul class="footer-links">
-                    <li><a href="#">О нас</a></li>
-                    <li><a href="#">Блог</a></li>
-                    <li><a href="#">Контакты</a></li>
-                </ul>
+            <div class="nav-item" onclick="switchTab('services')">
+                <span>🔧</span>
+                <span>Сервисы</span>
             </div>
-            <div class="footer-col">
-                <h4>Правовая</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Политика</a></li>
-                    <li><a href="#">Условия</a></li>
-                </ul>
+            <div class="nav-item" onclick="switchTab('profile')">
+                <span>👤</span>
+                <span>Профиль</span>
             </div>
-        </footer>
+        </div>
+
+        <!-- Модальное окно для уведомлений -->
+        <div class="modal" id="modal"></div>
     </div>
 
-    <!-- Плавная прокрутка -->
     <script>
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if(target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
+        // Инициализация Telegram
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // 1. Диагностика
+        function runDiagnostics() {
+            const result = document.getElementById('diagnostics-result');
+            result.innerHTML = '<div class="result-title">🔍 Результаты диагностики:</div>';
+            
+            const checks = [
+                { name: 'Двигатель', status: '✅ OK' },
+                { name: 'Тормозная система', status: '✅ OK' },
+                { name: 'Аккумулятор', status: '⚠️ 12.1V (низкий)' },
+                { name: 'Масло', status: '✅ 32%' },
+                { name: 'Шины', status: '✅ 2.3 бар' }
+            ];
+            
+            checks.forEach(check => {
+                result.innerHTML += `<div class="result-item"><span>${check.name}</span><span>${check.status}</span></div>`;
             });
+            
+            result.innerHTML += '<div style="margin-top:12px; color:#666;">Рекомендация: Проверьте аккумулятор</div>';
+            result.classList.add('show');
+            
+            // Скрываем через 5 секунд
+            setTimeout(() => result.classList.remove('show'), 5000);
+            
+            showNotification('Диагностика завершена');
+        }
+
+        // 2. Поиск сервисов
+        function findServices() {
+            const result = document.getElementById('services-result');
+            result.innerHTML = '<div class="result-title">🔧 Сервисы рядом:</div>';
+            
+            const services = [
+                { name: 'СТО на Ленина', dist: '1.2 км', rating: '4.8' },
+                { name: 'Автосервис 24', dist: '2.5 км', rating: '4.6' },
+                { name: 'Премиум Гараж', dist: '3.1 км', rating: '4.9' }
+            ];
+            
+            services.forEach(service => {
+                result.innerHTML += `<div class="result-item"><span>${service.name}</span><span>${service.dist} ★${service.rating}</span></div>`;
+            });
+            
+            result.classList.add('show');
+            setTimeout(() => result.classList.remove('show'), 5000);
+        }
+
+        // 3. История
+        function showHistory() {
+            const result = document.getElementById('history-result');
+            result.innerHTML = '<div class="result-title">📊 Последние 3 записи:</div>';
+            
+            const history = [
+                { date: '15.03', desc: 'Замена масла', cost: '5 900 ₽' },
+                { date: '02.03', desc: 'Колодки передние', cost: '4 500 ₽' },
+                { date: '10.02', desc: 'Шиномонтаж', cost: '2 800 ₽' }
+            ];
+            
+            history.forEach(item => {
+                result.innerHTML += `<div class="result-item"><span>${item.date} ${item.desc}</span><span>${item.cost}</span></div>`;
+            });
+            
+            result.classList.add('show');
+            setTimeout(() => result.classList.remove('show'), 5000);
+        }
+
+        // Быстрые действия
+        function checkOil() {
+            showNotification('🛢️ Уровень масла: 32% (норма)');
+        }
+
+        function checkTires() {
+            showNotification('🛞 Давление: перед 2.3, зад 2.3 бар');
+        }
+
+        function callTow() {
+            showNotification('🚨 Эвакуатор: +7 (999) 123-45-67');
+        }
+
+        function addReminder() {
+            const text = prompt('О чём напомнить?', 'Замена масла');
+            if (text) showNotification(`✅ Напоминание: "${text}"`);
+        }
+
+        // Детали истории
+        function showHistoryDetail(type) {
+            if (type === 'oil') showNotification('Замена масла 15.03.2024 • 5 900 ₽ • Лукойл 5W-30');
+            else if (type === 'brakes') showNotification('Колодки передние 02.03.2024 • 4 500 ₽ • TRW');
+        }
+
+        function showAllHistory() {
+            showNotification('Вся история в разработке');
+        }
+
+        // Переключение вкладок
+        function switchTab(tab) {
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(item => item.classList.remove('active'));
+            
+            if (tab === 'home') {
+                event.target.closest('.nav-item').classList.add('active');
+                showNotification('🏠 Главная');
+            } else if (tab === 'diagnostics') {
+                event.target.closest('.nav-item').classList.add('active');
+                runDiagnostics();
+            } else if (tab === 'services') {
+                event.target.closest('.nav-item').classList.add('active');
+                findServices();
+            } else if (tab === 'profile') {
+                event.target.closest('.nav-item').classList.add('active');
+                showNotification('👤 Профиль владельца BMW X5');
+            }
+        }
+
+        // Меню
+        function showMenu() {
+            showNotification('Меню: Настройки • Помощь • Выйти');
+        }
+
+        // Уведомления
+        function showNotification(message) {
+            const modal = document.getElementById('modal');
+            modal.textContent = message;
+            modal.classList.add('show');
+            
+            setTimeout(() => {
+                modal.classList.remove('show');
+            }, 2000);
+            
+            // Вибрация в Telegram
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        // Обработка кнопки назад
+        tg.onEvent('backButtonClicked', () => {
+            tg.close();
         });
     </script>
 </body>
