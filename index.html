@@ -543,33 +543,104 @@
             background: #555;
         }
 
-        .support-btn {
-            width: 100%;
+        /* Стили для страницы поддержки */
+        .support-card {
             background: #f8f8f8;
-            border: 1px solid #f0f0f0;
             border-radius: 16px;
             padding: 20px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: left;
+            margin-bottom: 16px;
+            border: 1px solid #f0f0f0;
+        }
+
+        body.night-theme .support-card {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+
+        .support-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .contact-item {
             display: flex;
             align-items: center;
             gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
         }
 
-        body.night-theme .support-btn {
-            background: #2d2d2d;
-            border-color: #444;
-            color: #fff;
+        body.night-theme .contact-item {
+            border-bottom-color: #444;
         }
 
-        .support-btn:active {
-            background: #f0f0f0;
+        .contact-item:last-child {
+            border-bottom: none;
         }
 
-        body.night-theme .support-btn:active {
-            background: #404040;
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        body.night-theme .contact-icon {
+            background: #444;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .contact-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .chat-button {
+            width: 100%;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        body.night-theme .chat-button {
+            background: #444;
+        }
+
+        .chat-button:active {
+            opacity: 0.8;
+        }
+
+        .support-note {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 16px;
         }
     </style>
 </head>
@@ -589,7 +660,7 @@
         <!-- Меню с анимацией - ТОЛЬКО Настройки и Поддержка -->
         <div class="menu-panel" id="menuPanel">
             <div class="menu-item" onclick="navigateToPage('settings-page'); toggleMenu();">⚙️ Настройки</div>
-            <div class="menu-item" onclick="support(); toggleMenu();">🆘 Поддержка</div>
+            <div class="menu-item" onclick="navigateToPage('support-page'); toggleMenu();">🆘 Поддержка</div>
         </div>
 
         <!-- Контент (с отступом для нижней навигации) -->
@@ -741,6 +812,57 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Страница Поддержка -->
+            <div class="page" id="support-page">
+                <div style="margin-bottom: 20px;">
+                    <h1 style="font-size: 24px; margin-bottom: 16px;">🆘 Поддержка</h1>
+                    
+                    <div class="support-card">
+                        <div class="support-title">Контакты</div>
+                        
+                        <!-- Номер телефона -->
+                        <div class="contact-item" onclick="copyToClipboard('+79871494882')">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-info">
+                                <div class="contact-label">Телефон</div>
+                                <div class="contact-value">+7 (987) 149-48-82</div>
+                            </div>
+                            <div style="color: #999; font-size: 12px;">нажмите чтобы скопировать</div>
+                        </div>
+                        
+                        <!-- VK -->
+                        <div class="contact-item" onclick="openVK()">
+                            <div class="contact-icon">VK</div>
+                            <div class="contact-info">
+                                <div class="contact-label">ВКонтакте</div>
+                                <div class="contact-value">@metamrphsis</div>
+                            </div>
+                            <div style="color: #999; font-size: 12px;">открыть</div>
+                        </div>
+                        
+                        <!-- Telegram -->
+                        <div class="contact-item" onclick="openTelegram()">
+                            <div class="contact-icon">📱</div>
+                            <div class="contact-info">
+                                <div class="contact-label">Telegram</div>
+                                <div class="contact-value">@qwqrwqqwwqq</div>
+                            </div>
+                            <div style="color: #999; font-size: 12px;">открыть</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Кнопка чата -->
+                    <button class="chat-button" onclick="openChat()">
+                        💬 Написать в чат
+                        <span style="font-size: 12px;">→</span>
+                    </button>
+                    
+                    <div class="support-note">
+                        Обычно отвечаю в течение 5-10 минут
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Нижняя навигация -->
@@ -802,9 +924,26 @@
             showNotification(document.body.classList.contains('night-theme') ? '🌙 Ночная тема включена' : '☀️ Дневная тема включена');
         }
 
-        // Поддержка (пока просто уведомление)
-        function support() {
-            showNotification('🆘 Поддержка: напишите нам на help@autohelper.ru');
+        // Функции для поддержки
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('📋 Номер скопирован: ' + text);
+            });
+        }
+
+        function openVK() {
+            window.open('https://vk.com/metamrphsis', '_blank');
+            showNotification('📱 Открываю VK...');
+        }
+
+        function openTelegram() {
+            window.open('https://t.me/qwqrwqqwwqq', '_blank');
+            showNotification('📱 Открываю Telegram...');
+        }
+
+        function openChat() {
+            window.open('https://t.me/qwqrwqqwwqq', '_blank');
+            showNotification('💬 Открываю чат с поддержкой...');
         }
 
         // Переключение страниц
