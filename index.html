@@ -412,13 +412,18 @@
             border-bottom-color: #444;
         }
 
-        /* Страницы - без анимации для всех */
+        /* Страницы - с анимацией жидкого стекла как в Telegram */
         .page {
             display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
         .page.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Нижняя навигация */
@@ -543,7 +548,7 @@
             background: #555;
         }
 
-        /* Стили для страницы поддержки */
+        /* Стили для страницы поддержки - обновленные */
         .support-card {
             background: #f8f8f8;
             border-radius: 16px;
@@ -611,6 +616,18 @@
             font-weight: 500;
         }
 
+        .contact-action {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .phone-number {
+            font-size: 16px;
+            font-weight: 500;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
         .chat-button {
             width: 100%;
             background: #000;
@@ -634,13 +651,6 @@
 
         .chat-button:active {
             opacity: 0.8;
-        }
-
-        .support-note {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            margin-top: 16px;
         }
     </style>
 </head>
@@ -813,7 +823,7 @@
                 </div>
             </div>
 
-            <!-- Страница Поддержка -->
+            <!-- Страница Поддержка - обновленная -->
             <div class="page" id="support-page">
                 <div style="margin-bottom: 20px;">
                     <h1 style="font-size: 24px; margin-bottom: 16px;">🆘 Поддержка</h1>
@@ -826,9 +836,9 @@
                             <div class="contact-icon">📞</div>
                             <div class="contact-info">
                                 <div class="contact-label">Телефон</div>
-                                <div class="contact-value">+7 (987) 149-48-82</div>
+                                <div class="phone-number">+7 (987) 149-48-82</div>
                             </div>
-                            <div style="color: #999; font-size: 12px;">нажмите чтобы скопировать</div>
+                            <div class="contact-action">скопировать</div>
                         </div>
                         
                         <!-- VK -->
@@ -838,7 +848,7 @@
                                 <div class="contact-label">ВКонтакте</div>
                                 <div class="contact-value">@metamrphsis</div>
                             </div>
-                            <div style="color: #999; font-size: 12px;">открыть</div>
+                            <div class="contact-action">открыть</div>
                         </div>
                         
                         <!-- Telegram -->
@@ -848,19 +858,14 @@
                                 <div class="contact-label">Telegram</div>
                                 <div class="contact-value">@qwqrwqqwwqq</div>
                             </div>
-                            <div style="color: #999; font-size: 12px;">открыть</div>
+                            <div class="contact-action">открыть</div>
                         </div>
                     </div>
                     
                     <!-- Кнопка чата -->
                     <button class="chat-button" onclick="openChat()">
-                        💬 Написать в чат
-                        <span style="font-size: 12px;">→</span>
+                        Написать в чат →
                     </button>
-                    
-                    <div class="support-note">
-                        Обычно отвечаю в течение 5-10 минут
-                    </div>
                 </div>
             </div>
         </div>
@@ -927,7 +932,7 @@
         // Функции для поддержки
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                showNotification('📋 Номер скопирован: ' + text);
+                showNotification('📋 Номер скопирован');
             });
         }
 
@@ -943,7 +948,7 @@
 
         function openChat() {
             window.open('https://t.me/qwqrwqqwwqq', '_blank');
-            showNotification('💬 Открываю чат с поддержкой...');
+            showNotification('💬 Открываю чат...');
         }
 
         // Переключение страниц
