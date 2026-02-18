@@ -19,6 +19,89 @@
             color: #000000;
             min-height: 100vh;
             padding: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.night-theme {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.night-theme .header {
+            border-bottom-color: #333;
+        }
+
+        body.night-theme .menu-button {
+            background: #333;
+            color: #fff;
+        }
+
+        body.night-theme .menu-panel {
+            background: #2d2d2d;
+            border-color: #444;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        body.night-theme .menu-item {
+            border-bottom-color: #444;
+            color: #fff;
+        }
+
+        body.night-theme .menu-item:active {
+            background: #404040;
+        }
+
+        body.night-theme .function-card {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+
+        body.night-theme .function-info p {
+            color: #aaa;
+        }
+
+        body.night-theme .car-status {
+            background: #333;
+        }
+
+        body.night-theme .history-item {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+
+        body.night-theme .history-date {
+            color: #aaa;
+        }
+
+        body.night-theme .history-price {
+            color: #fff;
+        }
+
+        body.night-theme .result-panel {
+            background: #2d2d2d;
+            border-left-color: #666;
+        }
+
+        body.night-theme .diagnostics-list {
+            background: #2d2d2d;
+        }
+
+        body.night-theme .bottom-nav {
+            background: #1a1a1a;
+            border-top-color: #333;
+        }
+
+        body.night-theme .nav-item {
+            color: #888;
+        }
+
+        body.night-theme .nav-item.active {
+            color: #fff;
+        }
+
+        body.night-theme .modal {
+            background: rgba(255,255,255,0.9);
+            color: #000;
         }
 
         .container {
@@ -51,6 +134,11 @@
             padding: 4px 8px;
             border-radius: 20px;
             font-weight: 400;
+        }
+
+        body.night-theme .logo span {
+            background: #fff;
+            color: #000;
         }
 
         .menu-button {
@@ -116,6 +204,10 @@
             font-size: 16px;
         }
 
+        body.night-theme .welcome p {
+            color: #aaa;
+        }
+
         /* Основные функции (большие кнопки) */
         .functions {
             display: flex;
@@ -150,6 +242,10 @@
             justify-content: center;
             color: white;
             font-size: 24px;
+        }
+
+        body.night-theme .function-icon {
+            background: #444;
         }
 
         .function-info {
@@ -312,6 +408,10 @@
             border-bottom: none;
         }
 
+        body.night-theme .result-item {
+            border-bottom-color: #444;
+        }
+
         /* Страницы - без анимации для всех */
         .page {
             display: none;
@@ -321,7 +421,7 @@
             display: block;
         }
 
-        /* Нижняя навигация - еще уменьшенные иконки */
+        /* Нижняя навигация */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -351,7 +451,7 @@
         }
 
         .nav-item span {
-            font-size: 16px; /* Уменьшено с 18px до 16px */
+            font-size: 16px;
         }
 
         /* Отступ для контента, чтобы не перекрывало навигацией */
@@ -385,6 +485,92 @@
             border-radius: 16px;
             padding: 16px;
         }
+
+        /* Стили для страницы настроек */
+        .settings-item {
+            background: #f8f8f8;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #f0f0f0;
+        }
+
+        body.night-theme .settings-item {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+
+        .settings-item span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #ddd;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4cd964;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        body.night-theme .toggle-switch:not(.active) {
+            background: #555;
+        }
+
+        .support-btn {
+            width: 100%;
+            background: #f8f8f8;
+            border: 1px solid #f0f0f0;
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        body.night-theme .support-btn {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #fff;
+        }
+
+        .support-btn:active {
+            background: #f0f0f0;
+        }
+
+        body.night-theme .support-btn:active {
+            background: #404040;
+        }
     </style>
 </head>
 <body>
@@ -400,13 +586,10 @@
             </div>
         </div>
 
-        <!-- Меню с анимацией -->
+        <!-- Меню с анимацией - ТОЛЬКО Настройки и Поддержка -->
         <div class="menu-panel" id="menuPanel">
-            <div class="menu-item" onclick="navigateToPage('home'); toggleMenu();">🏠 Главная</div>
-            <div class="menu-item" onclick="navigateToPage('diagnostics-page'); toggleMenu();">🔍 Диагностика</div>
-            <div class="menu-item" onclick="navigateToPage('services-page'); toggleMenu();">🔧 Сервисы</div>
-            <div class="menu-item" onclick="navigateToPage('profile-page'); toggleMenu();">👤 Профиль</div>
-            <div class="menu-item" onclick="showNotification('Настройки'); toggleMenu();">⚙️ Настройки</div>
+            <div class="menu-item" onclick="navigateToPage('settings-page'); toggleMenu();">⚙️ Настройки</div>
+            <div class="menu-item" onclick="support(); toggleMenu();">🆘 Поддержка</div>
         </div>
 
         <!-- Контент (с отступом для нижней навигации) -->
@@ -547,9 +730,20 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Страница Настройки -->
+            <div class="page" id="settings-page">
+                <div style="margin-bottom: 20px;">
+                    <h1 style="font-size: 24px; margin-bottom: 16px;">⚙️ Настройки</h1>
+                    <div class="settings-item">
+                        <span>🌙 Ночная тема</span>
+                        <div class="toggle-switch" id="theme-toggle" onclick="toggleTheme()"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Нижняя навигация с еще уменьшенными иконками -->
+        <!-- Нижняя навигация -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="navigateToPage('home')">
                 <span>🏠</span>
@@ -585,6 +779,34 @@
         document.getElementById('username').textContent = username;
         document.getElementById('profile-name').textContent = username;
 
+        // Проверяем сохраненную тему
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'night') {
+            document.body.classList.add('night-theme');
+            document.getElementById('theme-toggle').classList.add('active');
+        }
+
+        // Переключение темы
+        function toggleTheme() {
+            const toggle = document.getElementById('theme-toggle');
+            document.body.classList.toggle('night-theme');
+            toggle.classList.toggle('active');
+            
+            // Сохраняем выбор
+            if (document.body.classList.contains('night-theme')) {
+                localStorage.setItem('theme', 'night');
+            } else {
+                localStorage.setItem('theme', 'day');
+            }
+            
+            showNotification(document.body.classList.contains('night-theme') ? '🌙 Ночная тема включена' : '☀️ Дневная тема включена');
+        }
+
+        // Поддержка (пока просто уведомление)
+        function support() {
+            showNotification('🆘 Поддержка: напишите нам на help@autohelper.ru');
+        }
+
         // Переключение страниц
         function navigateToPage(pageId) {
             // Скрываем все страницы
@@ -618,9 +840,6 @@
             
             // Закрываем меню если открыто
             document.getElementById('menuPanel').classList.remove('open');
-            
-            // Убираем уведомления для всех страниц (как для Главной)
-            // Никаких уведомлений при переключении
         }
 
         // Открытие/закрытие меню с анимацией
