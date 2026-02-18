@@ -223,40 +223,6 @@
             color: #ffcc00;
         }
 
-        /* Быстрые действия */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-
-        .quick-btn {
-            background: #f8f8f8;
-            border: 1px solid #f0f0f0;
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .quick-btn:active {
-            background: #f0f0f0;
-        }
-
-        .quick-btn span {
-            font-size: 24px;
-        }
-
-        .quick-btn p {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
         /* История */
         .history {
             margin-bottom: 32px;
@@ -449,7 +415,7 @@
 
         <!-- Меню с анимацией -->
         <div class="menu-panel" id="menuPanel">
-            <div class="menu-item" onclick="navigateToPage('home'); toggleMenu(); showNotification('🏠 Главная')">🏠 Главная</div>
+            <div class="menu-item" onclick="navigateToPage('home'); toggleMenu();">🏠 Главная</div>
             <div class="menu-item" onclick="navigateToPage('diagnostics-page'); toggleMenu();">🔍 Диагностика</div>
             <div class="menu-item" onclick="navigateToPage('services-page'); toggleMenu();">🔧 Сервисы</div>
             <div class="menu-item" onclick="navigateToPage('profile-page'); toggleMenu();">👤 Профиль</div>
@@ -528,26 +494,6 @@
                     <div class="result-panel" id="history-result"></div>
                 </div>
 
-                <!-- Быстрые действия -->
-                <div class="quick-actions">
-                    <div class="quick-btn" onclick="checkOil()">
-                        <span>🛢️</span>
-                        <p>Масло</p>
-                    </div>
-                    <div class="quick-btn" onclick="checkTires()">
-                        <span>🛞</span>
-                        <p>Шины</p>
-                    </div>
-                    <div class="quick-btn" onclick="callTow()">
-                        <span>🚨</span>
-                        <p>Эвакуатор</p>
-                    </div>
-                    <div class="quick-btn" onclick="addReminder()">
-                        <span>⏰</span>
-                        <p>Напомнить</p>
-                    </div>
-                </div>
-
                 <!-- Последние события -->
                 <div class="history">
                     <div class="history-header">
@@ -588,14 +534,16 @@
                 </div>
             </div>
 
-            <!-- Страница Сервисы -->
+            <!-- Страница Сервисы (УФИМСКИЕ) -->
             <div class="page" id="services-page">
                 <div style="margin-bottom: 20px;">
-                    <h1 style="font-size: 24px; margin-bottom: 16px;">🔧 Сервисы рядом</h1>
+                    <h1 style="font-size: 24px; margin-bottom: 16px;">🔧 Сервисы в Уфе</h1>
                     <div class="diagnostics-list">
-                        <div class="result-item"><span>🚗 СТО на Ленина</span><span>1.2 км ★4.8</span></div>
-                        <div class="result-item"><span>🔧 Автосервис 24</span><span>2.5 км ★4.6</span></div>
-                        <div class="result-item"><span>⭐ Премиум Гараж</span><span>3.1 км ★4.9</span></div>
+                        <div class="result-item"><span>🚗 СТО на Менделеева</span><span>1.2 км ★4.8</span></div>
+                        <div class="result-item"><span>🔧 Башавтокомплект</span><span>2.5 км ★4.7</span></div>
+                        <div class="result-item"><span>⭐ Уфа-Лада</span><span>3.1 км ★4.9</span></div>
+                        <div class="result-item"><span>🔨 Автосервис на Комсомольской</span><span>1.8 км ★4.6</span></div>
+                        <div class="result-item"><span>🛠️ Техцентр на Российской</span><span>2.2 км ★4.8</span></div>
                     </div>
                 </div>
             </div>
@@ -658,7 +606,10 @@
             });
             
             // Показываем нужную страницу
-            document.getElementById(pageId).classList.add('active');
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
             
             // Обновляем активный пункт в навигации
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -667,13 +618,22 @@
             
             // Находим какой nav-item соответствует странице и делаем активным
             const navItems = document.querySelectorAll('.nav-item');
-            if (pageId === 'home') navItems[0].classList.add('active');
-            else if (pageId === 'diagnostics-page') navItems[1].classList.add('active');
-            else if (pageId === 'services-page') navItems[2].classList.add('active');
-            else if (pageId === 'profile-page') navItems[3].classList.add('active');
+            if (pageId === 'home' || pageId === 'home-page') {
+                navItems[0].classList.add('active');
+                document.getElementById('home-page').classList.add('active');
+            } else if (pageId === 'diagnostics-page') {
+                navItems[1].classList.add('active');
+            } else if (pageId === 'services-page') {
+                navItems[2].classList.add('active');
+            } else if (pageId === 'profile-page') {
+                navItems[3].classList.add('active');
+            }
             
             // Закрываем меню если открыто
             document.getElementById('menuPanel').classList.remove('open');
+            
+            // Показываем уведомление о переключении
+            if (pageId === 'home') showNotification('🏠 Главная');
         }
 
         // Открытие/закрытие меню с анимацией
@@ -733,13 +693,15 @@
                 document.getElementById('diagnostics-arrow').classList.remove('rotated');
                 document.getElementById('history-arrow').classList.remove('rotated');
                 
-                // Показываем сервисы
-                result.innerHTML = '<div class="result-title">🔧 Сервисы рядом:</div>';
+                // Показываем сервисы (УФИМСКИЕ)
+                result.innerHTML = '<div class="result-title">🔧 Сервисы в Уфе:</div>';
                 
                 const services = [
-                    { name: 'СТО на Ленина', dist: '1.2 км', rating: '4.8' },
-                    { name: 'Автосервис 24', dist: '2.5 км', rating: '4.6' },
-                    { name: 'Премиум Гараж', dist: '3.1 км', rating: '4.9' }
+                    { name: 'СТО на Менделеева', dist: '1.2 км', rating: '4.8' },
+                    { name: 'Башавтокомплект', dist: '2.5 км', rating: '4.7' },
+                    { name: 'Уфа-Лада', dist: '3.1 км', rating: '4.9' },
+                    { name: 'Автосервис на Комсомольской', dist: '1.8 км', rating: '4.6' },
+                    { name: 'Техцентр на Российской', dist: '2.2 км', rating: '4.8' }
                 ];
                 
                 services.forEach(service => {
@@ -784,24 +746,6 @@
             }
         }
 
-        // Быстрые действия
-        function checkOil() {
-            showNotification('🛢️ Уровень масла: 32% (норма)');
-        }
-
-        function checkTires() {
-            showNotification('🛞 Давление: перед 2.3, зад 2.3 бар');
-        }
-
-        function callTow() {
-            showNotification('🚨 Эвакуатор: +7 (999) 123-45-67');
-        }
-
-        function addReminder() {
-            const text = prompt('О чём напомнить?', 'Замена масла');
-            if (text) showNotification(`✅ Напоминание: "${text}"`);
-        }
-
         // Детали истории
         function showHistoryDetail(type) {
             if (type === 'oil') showNotification('Замена масла 15.03.2024 • 5 900 ₽ • Лукойл 5W-30');
@@ -832,5 +776,8 @@
             tg.close();
         });
     </script>
+
+    <!-- Создаем пустой файл app.js для будущих URL картинок -->
+    <!-- app.js - здесь можно будет вставить URL картинок позже -->
 </body>
 </html>
