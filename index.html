@@ -65,6 +65,40 @@
             cursor: pointer;
         }
 
+        /* Меню с анимацией */
+        .menu-panel {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .menu-panel.open {
+            max-height: 300px;
+            opacity: 1;
+            margin-bottom: 24px;
+        }
+
+        .menu-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .menu-item:active {
+            background: #f5f5f5;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
         /* Приветствие */
         .welcome {
             margin-bottom: 32px;
@@ -136,6 +170,11 @@
         .arrow {
             color: #999;
             font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .arrow.rotated {
+            transform: rotate(90deg);
         }
 
         /* Секция с данными автомобиля */
@@ -239,6 +278,7 @@
             color: #999;
             text-decoration: none;
             font-size: 14px;
+            cursor: pointer;
         }
 
         .history-item {
@@ -249,6 +289,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+        }
+
+        .history-item:active {
+            background: #f0f0f0;
         }
 
         .history-date {
@@ -286,7 +331,7 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -305,6 +350,21 @@
 
         .result-item:last-child {
             border-bottom: none;
+        }
+
+        /* Страницы */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* Нижняя навигация */
@@ -328,6 +388,7 @@
             color: #999;
             font-size: 12px;
             cursor: pointer;
+            flex: 1;
         }
 
         .nav-item.active {
@@ -364,6 +425,13 @@
             display: block;
             animation: fadeIn 0.3s;
         }
+
+        /* Страница диагностики */
+        .diagnostics-list {
+            background: #f8f8f8;
+            border-radius: 16px;
+            padding: 16px;
+        }
     </style>
 </head>
 <body>
@@ -374,141 +442,193 @@
                 🚗 AutoHelper
                 <span>TMA</span>
             </div>
-            <div class="menu-button" onclick="showMenu()">
+            <div class="menu-button" onclick="toggleMenu()">
                 ☰
             </div>
         </div>
 
+        <!-- Меню с анимацией -->
+        <div class="menu-panel" id="menuPanel">
+            <div class="menu-item" onclick="navigateToPage('home'); toggleMenu(); showNotification('🏠 Главная')">🏠 Главная</div>
+            <div class="menu-item" onclick="navigateToPage('diagnostics-page'); toggleMenu();">🔍 Диагностика</div>
+            <div class="menu-item" onclick="navigateToPage('services-page'); toggleMenu();">🔧 Сервисы</div>
+            <div class="menu-item" onclick="navigateToPage('profile-page'); toggleMenu();">👤 Профиль</div>
+            <div class="menu-item" onclick="showNotification('Настройки'); toggleMenu();">⚙️ Настройки</div>
+        </div>
+
         <!-- Контент (с отступом для нижней навигации) -->
         <div class="content">
-            <!-- Приветствие -->
-            <div class="welcome">
-                <h1>Привет,<br>владелец BMW X5</h1>
-                <p>Ваш автомобиль готов к поездке</p>
+            <!-- Страница Home -->
+            <div class="page active" id="home-page">
+                <!-- Приветствие -->
+                <div class="welcome">
+                    <h1>Привет, <span id="username">друг</span></h1>
+                    <p>Ваш автомобиль готов к поездке</p>
+                </div>
+
+                <!-- Статус авто -->
+                <div class="car-status">
+                    <h2>Текущее состояние</h2>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="status-label">Масло</span>
+                            <span class="status-value status-good">32% • 3200 км</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Тормоза</span>
+                            <span class="status-value status-good">85%</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Аккумулятор</span>
+                            <span class="status-value status-warn">12.1V ⚠️</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Шины</span>
+                            <span class="status-value status-good">2.3 бар</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Основные функции -->
+                <div class="functions">
+                    <!-- Диагностика -->
+                    <div class="function-card" onclick="toggleDiagnostics()">
+                        <div class="function-icon">🔍</div>
+                        <div class="function-info">
+                            <h3>Диагностика</h3>
+                            <p>Проверить все системы</p>
+                        </div>
+                        <div class="arrow" id="diagnostics-arrow">›</div>
+                    </div>
+                    <!-- Результат диагностики -->
+                    <div class="result-panel" id="diagnostics-result"></div>
+
+                    <!-- Найти СТО -->
+                    <div class="function-card" onclick="toggleServices()">
+                        <div class="function-icon">🔧</div>
+                        <div class="function-info">
+                            <h3>Найти СТО</h3>
+                            <p>Сервисы рядом с вами</p>
+                        </div>
+                        <div class="arrow" id="services-arrow">›</div>
+                    </div>
+                    <!-- Результат поиска СТО -->
+                    <div class="result-panel" id="services-result"></div>
+
+                    <!-- История -->
+                    <div class="function-card" onclick="toggleHistory()">
+                        <div class="function-icon">📊</div>
+                        <div class="function-info">
+                            <h3>История</h3>
+                            <p>Все ремонты и ТО</p>
+                        </div>
+                        <div class="arrow" id="history-arrow">›</div>
+                    </div>
+                    <!-- Результат истории -->
+                    <div class="result-panel" id="history-result"></div>
+                </div>
+
+                <!-- Быстрые действия -->
+                <div class="quick-actions">
+                    <div class="quick-btn" onclick="checkOil()">
+                        <span>🛢️</span>
+                        <p>Масло</p>
+                    </div>
+                    <div class="quick-btn" onclick="checkTires()">
+                        <span>🛞</span>
+                        <p>Шины</p>
+                    </div>
+                    <div class="quick-btn" onclick="callTow()">
+                        <span>🚨</span>
+                        <p>Эвакуатор</p>
+                    </div>
+                    <div class="quick-btn" onclick="addReminder()">
+                        <span>⏰</span>
+                        <p>Напомнить</p>
+                    </div>
+                </div>
+
+                <!-- Последние события -->
+                <div class="history">
+                    <div class="history-header">
+                        <h3>Последние события</h3>
+                        <a onclick="showAllHistory()">Все</a>
+                    </div>
+                    <div class="history-item" onclick="showHistoryDetail('oil')">
+                        <div>
+                            <div class="history-date">15 марта 2024</div>
+                            <div class="history-title">Замена масла</div>
+                            <div class="history-price">5 900 ₽</div>
+                        </div>
+                        <div class="history-arrow">›</div>
+                    </div>
+                    <div class="history-item" onclick="showHistoryDetail('brakes')">
+                        <div>
+                            <div class="history-date">2 марта 2024</div>
+                            <div class="history-title">Колодки передние</div>
+                            <div class="history-price">4 500 ₽</div>
+                        </div>
+                        <div class="history-arrow">›</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Статус авто -->
-            <div class="car-status">
-                <h2>Текущее состояние</h2>
-                <div class="status-grid">
-                    <div class="status-item">
-                        <span class="status-label">Масло</span>
-                        <span class="status-value status-good">32% • 3200 км</span>
+            <!-- Страница Диагностика -->
+            <div class="page" id="diagnostics-page">
+                <div style="margin-bottom: 20px;">
+                    <h1 style="font-size: 24px; margin-bottom: 16px;">🔍 Диагностика</h1>
+                    <div class="diagnostics-list">
+                        <div class="result-item"><span>Двигатель</span><span style="color: #4cd964;">✅ ОК</span></div>
+                        <div class="result-item"><span>Тормозная система</span><span style="color: #4cd964;">✅ ОК</span></div>
+                        <div class="result-item"><span>Аккумулятор</span><span style="color: #ffcc00;">⚠️ 12.1V (низкий)</span></div>
+                        <div class="result-item"><span>Масло</span><span style="color: #4cd964;">✅ 32%</span></div>
+                        <div class="result-item"><span>Шины</span><span style="color: #4cd964;">✅ 2.3 бар</span></div>
                     </div>
-                    <div class="status-item">
-                        <span class="status-label">Тормоза</span>
-                        <span class="status-value status-good">85%</span>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label">Аккумулятор</span>
-                        <span class="status-value status-warn">12.1V ⚠️</span>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label">Шины</span>
-                        <span class="status-value status-good">2.3 бар</span>
+                    <p style="margin-top: 16px; color: #ffcc00;">Рекомендация: Проверьте аккумулятор</p>
+                </div>
+            </div>
+
+            <!-- Страница Сервисы -->
+            <div class="page" id="services-page">
+                <div style="margin-bottom: 20px;">
+                    <h1 style="font-size: 24px; margin-bottom: 16px;">🔧 Сервисы рядом</h1>
+                    <div class="diagnostics-list">
+                        <div class="result-item"><span>🚗 СТО на Ленина</span><span>1.2 км ★4.8</span></div>
+                        <div class="result-item"><span>🔧 Автосервис 24</span><span>2.5 км ★4.6</span></div>
+                        <div class="result-item"><span>⭐ Премиум Гараж</span><span>3.1 км ★4.9</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Основные функции -->
-            <div class="functions">
-                <!-- Диагностика -->
-                <div class="function-card" onclick="runDiagnostics()">
-                    <div class="function-icon">🔍</div>
-                    <div class="function-info">
-                        <h3>Диагностика</h3>
-                        <p>Проверить все системы</p>
+            <!-- Страница Профиль -->
+            <div class="page" id="profile-page">
+                <div style="margin-bottom: 20px;">
+                    <h1 style="font-size: 24px; margin-bottom: 16px;">👤 Профиль</h1>
+                    <div class="diagnostics-list">
+                        <div class="result-item"><span>Имя</span><span id="profile-name">Загрузка...</span></div>
+                        <div class="result-item"><span>Автомобиль</span><span>BMW X5</span></div>
+                        <div class="result-item"><span>Год</span><span>2021</span></div>
+                        <div class="result-item"><span>Пробег</span><span>45,000 км</span></div>
                     </div>
-                    <div class="arrow">›</div>
-                </div>
-                <!-- Результат диагностики -->
-                <div class="result-panel" id="diagnostics-result"></div>
-
-                <!-- Найти СТО -->
-                <div class="function-card" onclick="findServices()">
-                    <div class="function-icon">🔧</div>
-                    <div class="function-info">
-                        <h3>Найти СТО</h3>
-                        <p>Сервисы рядом с вами</p>
-                    </div>
-                    <div class="arrow">›</div>
-                </div>
-                <!-- Результат поиска СТО -->
-                <div class="result-panel" id="services-result"></div>
-
-                <!-- История -->
-                <div class="function-card" onclick="showHistory()">
-                    <div class="function-icon">📊</div>
-                    <div class="function-info">
-                        <h3>История</h3>
-                        <p>Все ремонты и ТО</p>
-                    </div>
-                    <div class="arrow">›</div>
-                </div>
-                <!-- Результат истории -->
-                <div class="result-panel" id="history-result"></div>
-            </div>
-
-            <!-- Быстрые действия -->
-            <div class="quick-actions">
-                <div class="quick-btn" onclick="checkOil()">
-                    <span>🛢️</span>
-                    <p>Масло</p>
-                </div>
-                <div class="quick-btn" onclick="checkTires()">
-                    <span>🛞</span>
-                    <p>Шины</p>
-                </div>
-                <div class="quick-btn" onclick="callTow()">
-                    <span>🚨</span>
-                    <p>Эвакуатор</p>
-                </div>
-                <div class="quick-btn" onclick="addReminder()">
-                    <span>⏰</span>
-                    <p>Напомнить</p>
-                </div>
-            </div>
-
-            <!-- Последние события -->
-            <div class="history">
-                <div class="history-header">
-                    <h3>Последние события</h3>
-                    <a href="#" onclick="showAllHistory(); return false;">Все</a>
-                </div>
-                <div class="history-item" onclick="showHistoryDetail('oil')">
-                    <div>
-                        <div class="history-date">15 марта 2024</div>
-                        <div class="history-title">Замена масла</div>
-                        <div class="history-price">5 900 ₽</div>
-                    </div>
-                    <div class="history-arrow">›</div>
-                </div>
-                <div class="history-item" onclick="showHistoryDetail('brakes')">
-                    <div>
-                        <div class="history-date">2 марта 2024</div>
-                        <div class="history-title">Колодки передние</div>
-                        <div class="history-price">4 500 ₽</div>
-                    </div>
-                    <div class="history-arrow">›</div>
                 </div>
             </div>
         </div>
 
         <!-- Нижняя навигация -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('home')">
+            <div class="nav-item active" onclick="navigateToPage('home')">
                 <span>🏠</span>
                 <span>Главная</span>
             </div>
-            <div class="nav-item" onclick="switchTab('diagnostics')">
+            <div class="nav-item" onclick="navigateToPage('diagnostics-page')">
                 <span>🔍</span>
                 <span>Диагностика</span>
             </div>
-            <div class="nav-item" onclick="switchTab('services')">
+            <div class="nav-item" onclick="navigateToPage('services-page')">
                 <span>🔧</span>
                 <span>Сервисы</span>
             </div>
-            <div class="nav-item" onclick="switchTab('profile')">
+            <div class="nav-item" onclick="navigateToPage('profile-page')">
                 <span>👤</span>
                 <span>Профиль</span>
             </div>
@@ -524,68 +644,144 @@
         tg.expand();
         tg.ready();
 
-        // 1. Диагностика
-        function runDiagnostics() {
+        // Получаем имя пользователя из Telegram
+        const user = tg.initDataUnsafe?.user;
+        const username = user?.first_name || user?.username || 'друг';
+        document.getElementById('username').textContent = username;
+        document.getElementById('profile-name').textContent = username;
+
+        // Переключение страниц
+        function navigateToPage(pageId) {
+            // Скрываем все страницы
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Показываем нужную страницу
+            document.getElementById(pageId).classList.add('active');
+            
+            // Обновляем активный пункт в навигации
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Находим какой nav-item соответствует странице и делаем активным
+            const navItems = document.querySelectorAll('.nav-item');
+            if (pageId === 'home') navItems[0].classList.add('active');
+            else if (pageId === 'diagnostics-page') navItems[1].classList.add('active');
+            else if (pageId === 'services-page') navItems[2].classList.add('active');
+            else if (pageId === 'profile-page') navItems[3].classList.add('active');
+            
+            // Закрываем меню если открыто
+            document.getElementById('menuPanel').classList.remove('open');
+        }
+
+        // Открытие/закрытие меню с анимацией
+        function toggleMenu() {
+            const menu = document.getElementById('menuPanel');
+            menu.classList.toggle('open');
+        }
+
+        // Переключение диагностики
+        function toggleDiagnostics() {
             const result = document.getElementById('diagnostics-result');
-            result.innerHTML = '<div class="result-title">🔍 Результаты диагностики:</div>';
+            const arrow = document.getElementById('diagnostics-arrow');
             
-            const checks = [
-                { name: 'Двигатель', status: '✅ OK' },
-                { name: 'Тормозная система', status: '✅ OK' },
-                { name: 'Аккумулятор', status: '⚠️ 12.1V (низкий)' },
-                { name: 'Масло', status: '✅ 32%' },
-                { name: 'Шины', status: '✅ 2.3 бар' }
-            ];
-            
-            checks.forEach(check => {
-                result.innerHTML += `<div class="result-item"><span>${check.name}</span><span>${check.status}</span></div>`;
-            });
-            
-            result.innerHTML += '<div style="margin-top:12px; color:#666;">Рекомендация: Проверьте аккумулятор</div>';
-            result.classList.add('show');
-            
-            // Скрываем через 5 секунд
-            setTimeout(() => result.classList.remove('show'), 5000);
-            
-            showNotification('Диагностика завершена');
+            if (result.classList.contains('show')) {
+                result.classList.remove('show');
+                arrow.classList.remove('rotated');
+            } else {
+                // Закрываем другие
+                document.getElementById('services-result').classList.remove('show');
+                document.getElementById('history-result').classList.remove('show');
+                document.getElementById('services-arrow').classList.remove('rotated');
+                document.getElementById('history-arrow').classList.remove('rotated');
+                
+                // Показываем диагностику
+                result.innerHTML = '<div class="result-title">🔍 Результаты диагностики:</div>';
+                
+                const checks = [
+                    { name: 'Двигатель', status: '✅ ОК' },
+                    { name: 'Тормозная система', status: '✅ ОК' },
+                    { name: 'Аккумулятор', status: '⚠️ 12.1V (низкий)' },
+                    { name: 'Масло', status: '✅ 32%' },
+                    { name: 'Шины', status: '✅ 2.3 бар' }
+                ];
+                
+                checks.forEach(check => {
+                    result.innerHTML += `<div class="result-item"><span>${check.name}</span><span>${check.status}</span></div>`;
+                });
+                
+                result.innerHTML += '<div style="margin-top:12px; color:#ffcc00;">Рекомендация: Проверьте аккумулятор</div>';
+                result.classList.add('show');
+                arrow.classList.add('rotated');
+            }
         }
 
-        // 2. Поиск сервисов
-        function findServices() {
+        // Переключение сервисов
+        function toggleServices() {
             const result = document.getElementById('services-result');
-            result.innerHTML = '<div class="result-title">🔧 Сервисы рядом:</div>';
+            const arrow = document.getElementById('services-arrow');
             
-            const services = [
-                { name: 'СТО на Ленина', dist: '1.2 км', rating: '4.8' },
-                { name: 'Автосервис 24', dist: '2.5 км', rating: '4.6' },
-                { name: 'Премиум Гараж', dist: '3.1 км', rating: '4.9' }
-            ];
-            
-            services.forEach(service => {
-                result.innerHTML += `<div class="result-item"><span>${service.name}</span><span>${service.dist} ★${service.rating}</span></div>`;
-            });
-            
-            result.classList.add('show');
-            setTimeout(() => result.classList.remove('show'), 5000);
+            if (result.classList.contains('show')) {
+                result.classList.remove('show');
+                arrow.classList.remove('rotated');
+            } else {
+                // Закрываем другие
+                document.getElementById('diagnostics-result').classList.remove('show');
+                document.getElementById('history-result').classList.remove('show');
+                document.getElementById('diagnostics-arrow').classList.remove('rotated');
+                document.getElementById('history-arrow').classList.remove('rotated');
+                
+                // Показываем сервисы
+                result.innerHTML = '<div class="result-title">🔧 Сервисы рядом:</div>';
+                
+                const services = [
+                    { name: 'СТО на Ленина', dist: '1.2 км', rating: '4.8' },
+                    { name: 'Автосервис 24', dist: '2.5 км', rating: '4.6' },
+                    { name: 'Премиум Гараж', dist: '3.1 км', rating: '4.9' }
+                ];
+                
+                services.forEach(service => {
+                    result.innerHTML += `<div class="result-item"><span>${service.name}</span><span>${service.dist} ★${service.rating}</span></div>`;
+                });
+                
+                result.classList.add('show');
+                arrow.classList.add('rotated');
+            }
         }
 
-        // 3. История
-        function showHistory() {
+        // Переключение истории
+        function toggleHistory() {
             const result = document.getElementById('history-result');
-            result.innerHTML = '<div class="result-title">📊 Последние 3 записи:</div>';
+            const arrow = document.getElementById('history-arrow');
             
-            const history = [
-                { date: '15.03', desc: 'Замена масла', cost: '5 900 ₽' },
-                { date: '02.03', desc: 'Колодки передние', cost: '4 500 ₽' },
-                { date: '10.02', desc: 'Шиномонтаж', cost: '2 800 ₽' }
-            ];
-            
-            history.forEach(item => {
-                result.innerHTML += `<div class="result-item"><span>${item.date} ${item.desc}</span><span>${item.cost}</span></div>`;
-            });
-            
-            result.classList.add('show');
-            setTimeout(() => result.classList.remove('show'), 5000);
+            if (result.classList.contains('show')) {
+                result.classList.remove('show');
+                arrow.classList.remove('rotated');
+            } else {
+                // Закрываем другие
+                document.getElementById('diagnostics-result').classList.remove('show');
+                document.getElementById('services-result').classList.remove('show');
+                document.getElementById('diagnostics-arrow').classList.remove('rotated');
+                document.getElementById('services-arrow').classList.remove('rotated');
+                
+                // Показываем историю
+                result.innerHTML = '<div class="result-title">📊 Последние 3 записи:</div>';
+                
+                const history = [
+                    { date: '15.03', desc: 'Замена масла', cost: '5 900 ₽' },
+                    { date: '02.03', desc: 'Колодки передние', cost: '4 500 ₽' },
+                    { date: '10.02', desc: 'Шиномонтаж', cost: '2 800 ₽' }
+                ];
+                
+                history.forEach(item => {
+                    result.innerHTML += `<div class="result-item"><span>${item.date} ${item.desc}</span><span>${item.cost}</span></div>`;
+                });
+                
+                result.classList.add('show');
+                arrow.classList.add('rotated');
+            }
         }
 
         // Быстрые действия
@@ -616,31 +812,6 @@
             showNotification('Вся история в разработке');
         }
 
-        // Переключение вкладок
-        function switchTab(tab) {
-            const items = document.querySelectorAll('.nav-item');
-            items.forEach(item => item.classList.remove('active'));
-            
-            if (tab === 'home') {
-                event.target.closest('.nav-item').classList.add('active');
-                showNotification('🏠 Главная');
-            } else if (tab === 'diagnostics') {
-                event.target.closest('.nav-item').classList.add('active');
-                runDiagnostics();
-            } else if (tab === 'services') {
-                event.target.closest('.nav-item').classList.add('active');
-                findServices();
-            } else if (tab === 'profile') {
-                event.target.closest('.nav-item').classList.add('active');
-                showNotification('👤 Профиль владельца BMW X5');
-            }
-        }
-
-        // Меню
-        function showMenu() {
-            showNotification('Меню: Настройки • Помощь • Выйти');
-        }
-
         // Уведомления
         function showNotification(message) {
             const modal = document.getElementById('modal');
@@ -651,7 +822,6 @@
                 modal.classList.remove('show');
             }, 2000);
             
-            // Вибрация в Telegram
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
