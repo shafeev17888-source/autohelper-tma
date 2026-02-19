@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Auto Helper</title>
+    <title>Auto Helper • Премиум</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Подключаем Spline для 3D -->
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.28/build/spline-viewer.js"></script>
+    <!-- Библиотека для анимированных иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -15,120 +17,126 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+            50% { box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+            100% { box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #ffffff;
             color: #000000;
             min-height: 100vh;
             padding: 16px;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body.night-theme {
-            background: #1a1a1a;
+            background: #0a0a0a;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             color: #ffffff;
         }
 
         body.night-theme .header {
-            border-bottom-color: #333;
+            border-bottom-color: rgba(255,255,255,0.1);
+            background: rgba(10,10,10,0.8);
         }
 
         body.night-theme .menu-button {
-            background: #333;
+            background: rgba(255,255,255,0.1);
             color: #fff;
+            backdrop-filter: blur(10px);
         }
 
         body.night-theme .menu-panel {
-            background: #2d2d2d;
-            border-color: #444;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            background: rgba(30,30,30,0.95);
+            border-color: rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
         }
 
         body.night-theme .menu-item {
-            border-bottom-color: #444;
+            border-bottom-color: rgba(255,255,255,0.05);
             color: #fff;
-        }
-
-        body.night-theme .menu-item:active {
-            background: #404040;
         }
 
         body.night-theme .function-card {
-            background: #2d2d2d;
-            border-color: #444;
-        }
-
-        body.night-theme .function-info p {
-            color: #aaa;
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
 
         body.night-theme .car-status {
-            background: #333;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         body.night-theme .history-item {
-            background: #2d2d2d;
-            border-color: #444;
-        }
-
-        body.night-theme .history-date {
-            color: #aaa;
-        }
-
-        body.night-theme .history-price {
-            color: #fff;
-        }
-
-        body.night-theme .result-panel {
-            background: #2d2d2d;
-            border-left-color: #666;
-        }
-
-        body.night-theme .diagnostics-list {
-            background: #2d2d2d;
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
 
         body.night-theme .bottom-nav {
-            background: rgba(26, 26, 26, 0.7);
-            border-top-color: rgba(255, 255, 255, 0.05);
-        }
-
-        body.night-theme .nav-item {
-            color: #888;
-        }
-
-        body.night-theme .nav-item.active {
-            color: #fff;
-        }
-
-        body.night-theme .modal {
-            background: rgba(255,255,255,0.9);
-            color: #000;
+            background: rgba(20,20,20,0.7);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
         }
 
         .container {
             max-width: 100%;
             margin: 0 auto;
+            position: relative;
         }
 
-        /* Шапка - теперь прилипает */
+        /* Шапка с эффектом стекла */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 24px;
             padding-bottom: 12px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
-            background: white;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
             z-index: 100;
-            padding-top: 8px;
-        }
-
-        body.night-theme .header {
-            background: #1a1a1a;
-            border-bottom-color: #333;
+            padding: 12px 0;
+            transition: all 0.3s ease;
         }
 
         .logo {
@@ -137,48 +145,62 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .logo i {
+            color: #007AFF;
+            animation: float 3s ease-in-out infinite;
         }
 
         .logo span {
-            background: #000;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
             color: white;
             font-size: 12px;
             padding: 4px 8px;
             border-radius: 20px;
             font-weight: 400;
-        }
-
-        body.night-theme .logo span {
-            background: #fff;
-            color: #000;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         .menu-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #f5f5f5;
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
         }
 
-        /* Меню с анимацией */
+        .menu-button:hover {
+            transform: scale(1.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .menu-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Меню с эффектом стекла */
         .menu-panel {
-            background: white;
+            background: rgba(255,255,255,0.95);
             border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             margin-bottom: 24px;
             overflow: hidden;
             max-height: 0;
             opacity: 0;
-            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
-            border: 1px solid #f0f0f0;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
             position: sticky;
-            top: 70px;
+            top: 80px;
             z-index: 99;
+            backdrop-filter: blur(20px);
         }
 
         .menu-panel.open {
@@ -188,34 +210,49 @@
         }
 
         .menu-item {
-            padding: 16px 20px;
-            border-bottom: 1px solid #f5f5f5;
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             cursor: pointer;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item i {
+            font-size: 20px;
+            width: 24px;
+            color: #007AFF;
         }
 
         .menu-item:active {
-            background: #f5f5f5;
+            background: rgba(0,122,255,0.1);
+            transform: translateX(5px);
         }
 
         .menu-item:last-child {
             border-bottom: none;
         }
 
-        /* 3D модель автомобиля */
+        /* 3D модель с градиентной анимацией */
         .car-3d-container {
             width: 100%;
-            height: 250px;
+            height: 280px;
             margin-bottom: 24px;
-            border-radius: 24px;
+            border-radius: 32px;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(-45deg, #667eea, #764ba2, #6b8cff, #5856D6);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        body.night-theme .car-3d-container {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        .car-3d-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
 
         spline-viewer {
@@ -224,65 +261,93 @@
             background: transparent;
         }
 
-        /* Приветствие */
+        /* Приветствие с анимацией */
         .welcome {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
+            animation: slideIn 0.6s ease;
         }
 
         .welcome h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             margin-bottom: 8px;
             line-height: 1.2;
+            background: linear-gradient(135deg, #000, #333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.night-theme .welcome h1 {
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .welcome p {
             color: #666;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        body.night-theme .welcome p {
-            color: #aaa;
+        .welcome p i {
+            color: #4cd964;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        /* Основные функции (большие кнопки) */
+        /* Функции с анимацией */
         .functions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             margin-bottom: 32px;
         }
 
         .function-card {
-            background: #f8f8f8;
-            border-radius: 16px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 24px;
             padding: 20px;
             display: flex;
             align-items: center;
             gap: 16px;
-            border: 1px solid #f0f0f0;
-            transition: background 0.2s;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.6s ease backwards;
+        }
+
+        .function-card:nth-child(1) { animation-delay: 0.1s; }
+        .function-card:nth-child(2) { animation-delay: 0.2s; }
+        .function-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .function-card:hover {
+            transform: translateX(8px) scale(1.02);
+            background: rgba(0,122,255,0.05);
+            border-color: #007AFF;
         }
 
         .function-card:active {
-            background: #f0f0f0;
+            transform: scale(0.98);
         }
 
         .function-icon {
-            width: 48px;
-            height: 48px;
-            background: #000;
-            border-radius: 14px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,122,255,0.3);
         }
 
-        body.night-theme .function-icon {
-            background: #444;
+        .function-card:hover .function-icon {
+            transform: rotate(10deg) scale(1.1);
         }
 
         .function-info {
@@ -290,9 +355,12 @@
         }
 
         .function-info h3 {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .function-info p {
@@ -302,63 +370,88 @@
 
         .arrow {
             color: #999;
-            font-size: 20px;
-            transition: transform 0.3s ease;
+            font-size: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.05);
         }
 
         .arrow.rotated {
             transform: rotate(90deg);
-        }
-
-        /* Секция с данными автомобиля - обновленный цвет */
-        .car-status {
-            background: #f5f5f5;
-            color: #000;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 32px;
-        }
-
-        body.night-theme .car-status {
-            background: #333;
+            background: #007AFF;
             color: white;
+        }
+
+        /* Статус автомобиля с неоновым эффектом */
+        .car-status {
+            background: rgba(0,0,0,0.02);
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            animation: glow 4s ease-in-out infinite;
+        }
+
+        .car-status:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
         .car-status h2 {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             color: #666;
-        }
-
-        body.night-theme .car-status h2 {
-            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .status-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 20px;
         }
 
         .status-item {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+
+        body.night-theme .status-item {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .status-item:hover {
+            transform: translateY(-2px);
+            background: rgba(0,122,255,0.1);
         }
 
         .status-label {
             font-size: 14px;
             color: #888;
-        }
-
-        body.night-theme .status-label {
-            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .status-value {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .status-good {
@@ -369,7 +462,15 @@
             color: #ffcc00;
         }
 
-        /* История */
+        .status-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(76,217,100,0.2);
+            color: #4cd964;
+        }
+
+        /* История с анимацией */
         .history {
             margin-bottom: 32px;
         }
@@ -379,99 +480,254 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
+            animation: slideIn 0.5s ease;
         }
 
         .history-header h3 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .history-header a {
-            color: #999;
+            color: #007AFF;
             text-decoration: none;
             font-size: 14px;
             cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(0,122,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .history-header a:hover {
+            background: rgba(0,122,255,0.2);
+            transform: scale(1.05);
         }
 
         .history-item {
-            background: #f8f8f8;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 8px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.5s ease backwards;
+        }
+
+        .history-item:nth-child(1) { animation-delay: 0.2s; }
+        .history-item:nth-child(2) { animation-delay: 0.3s; }
+
+        .history-item:hover {
+            transform: translateX(8px);
+            background: rgba(0,122,255,0.05);
+            border-color: #007AFF;
         }
 
         .history-item:active {
-            background: #f0f0f0;
+            transform: scale(0.98);
         }
 
         .history-date {
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .history-title {
-            font-weight: 500;
+            font-weight: 600;
             margin: 4px 0;
+            font-size: 16px;
         }
 
         .history-price {
-            color: #000;
-            font-weight: 600;
-        }
-
-        body.night-theme .history-price {
-            color: #fff;
+            color: #007AFF;
+            font-weight: 700;
+            font-size: 18px;
         }
 
         .history-arrow {
             color: #ccc;
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
-        /* Результаты (появляются после нажатия) */
+        .history-item:hover .history-arrow {
+            transform: translateX(5px);
+            background: #007AFF;
+            color: white;
+        }
+
+        /* Результаты с анимацией */
         .result-panel {
-            background: #f8f8f8;
-            border-radius: 16px;
-            padding: 16px;
-            margin: 16px 0;
+            background: rgba(0,122,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 8px 0 16px;
             display: none;
-            border-left: 4px solid #000;
+            border-left: 4px solid #007AFF;
+            animation: slideIn 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .result-panel.show {
             display: block;
+            animation: slideIn 0.3s ease;
         }
 
         .result-title {
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #007AFF;
         }
 
         .result-item {
             display: flex;
             justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            transform: translateX(5px);
+            background: rgba(0,122,255,0.05);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+
+        /* Нижняя навигация с эффектом стекла */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            border-left: 1px solid rgba(0,0,0,0.02);
+            border-right: 1px solid rgba(0,0,0,0.02);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 8px 16px 16px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #999;
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 8px 0;
-            border-bottom: 1px solid #eee;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .result-item:last-child {
-            border-bottom: none;
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #007AFF;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 16px;
+            z-index: -1;
         }
 
-        body.night-theme .result-item {
-            border-bottom-color: #444;
+        .nav-item:hover::before {
+            opacity: 0.1;
         }
 
-        /* Страницы - с анимацией жидкого стекла */
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .nav-item.active {
+            color: #007AFF;
+            transform: translateY(-4px);
+        }
+
+        .nav-item.active i {
+            transform: scale(1.2);
+            text-shadow: 0 5px 10px rgba(0,122,255,0.3);
+        }
+
+        .nav-item i {
+            font-size: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2px;
+        }
+
+        .nav-item span:last-child {
+            font-weight: 500;
+        }
+
+        /* Модальное окно с эффектом */
+        .modal {
+            position: fixed;
+            bottom: 100px;
+            left: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 18px;
+            border-radius: 24px;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            font-size: 15px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .modal.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        /* Страницы с анимацией */
         .page {
             display: none;
             opacity: 0;
-            transform: translateY(8px);
-            transition: opacity 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+            transform: translateY(20px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .page.active {
@@ -480,143 +736,37 @@
             transform: translateY(0);
         }
 
-        /* Нижняя навигация - более прозрачная с обводкой */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            border-left: 1px solid rgba(0, 0, 0, 0.03);
-            border-right: 1px solid rgba(0, 0, 0, 0.03);
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-            padding: 8px 16px 16px;
-            display: flex;
-            justify-content: space-around;
-            z-index: 100;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.02);
-        }
-
-        body.night-theme .bottom-nav {
-            background: rgba(26, 26, 26, 0.7);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-left: 1px solid rgba(255, 255, 255, 0.03);
-            border-right: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            color: #999;
-            font-size: 10px;
-            cursor: pointer;
-            flex: 1;
-            transition: all 0.2s ease;
-            padding: 6px 0;
-            border-radius: 8px;
-        }
-
-        .nav-item:active {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        body.night-theme .nav-item:active {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-item.active {
-            color: #000;
-            font-weight: 500;
-            transform: translateY(-2px);
-        }
-
-        body.night-theme .nav-item.active {
-            color: #fff;
-        }
-
-        .nav-item span {
-            font-size: 16px;
-            transition: transform 0.2s ease;
-        }
-
-        .nav-item.active span {
-            transform: scale(1.1);
-        }
-
-        /* Отступ для контента, чтобы не перекрывало навигацией */
+        /* Контент с отступом */
         .content {
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
 
-        /* Простая модалка для уведомлений */
-        .modal {
-            position: fixed;
-            bottom: 100px;
-            left: 16px;
-            right: 16px;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 16px;
-            border-radius: 16px;
-            display: none;
-            z-index: 1000;
-            text-align: center;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .modal.show {
-            display: block;
-        }
-
-        /* Страница диагностики */
-        .diagnostics-list {
-            background: #f8f8f8;
-            border-radius: 16px;
-            padding: 16px;
-        }
-
-        body.night-theme .diagnostics-list {
-            background: #2d2d2d;
-        }
-
-        /* Стили для страницы настроек */
-        .settings-item {
-            background: #f8f8f8;
-            border-radius: 16px;
+        /* Стили для страниц */
+        .diagnostics-list, .support-card, .settings-item {
+            background: rgba(0,0,0,0.02);
+            border-radius: 24px;
             padding: 20px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #f0f0f0;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
+        body.night-theme .diagnostics-list,
+        body.night-theme .support-card,
         body.night-theme .settings-item {
-            background: #2d2d2d;
-            border-color: #444;
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
         }
 
-        .settings-item span {
-            font-size: 16px;
-            font-weight: 500;
-        }
-
+        /* Кнопки и переключатели */
         .toggle-switch {
-            width: 50px;
-            height: 26px;
+            width: 52px;
+            height: 28px;
             background: #ddd;
-            border-radius: 13px;
+            border-radius: 14px;
             position: relative;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .toggle-switch.active {
@@ -626,121 +776,71 @@
         .toggle-switch::after {
             content: '';
             position: absolute;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             background: white;
             border-radius: 50%;
             top: 2px;
             left: 2px;
-            transition: transform 0.3s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .toggle-switch.active::after {
             transform: translateX(24px);
         }
 
-        body.night-theme .toggle-switch:not(.active) {
-            background: #555;
+        .toggle-switch:active::after {
+            transform: scale(0.9);
         }
 
-        /* Стили для страницы поддержки */
-        .support-card {
-            background: #f8f8f8;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid #f0f0f0;
+        .toggle-switch.active:active::after {
+            transform: translateX(24px) scale(0.9);
         }
 
-        body.night-theme .support-card {
-            background: #2d2d2d;
-            border-color: #444;
-        }
-
-        .support-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
+        /* Контакты в поддержке */
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
 
-        body.night-theme .contact-item {
-            border-bottom-color: #444;
-        }
-
-        .contact-item:last-child {
-            border-bottom: none;
+        .contact-item:hover {
+            background: rgba(0,122,255,0.1);
+            transform: translateX(5px);
         }
 
         .contact-icon {
-            width: 40px;
-            height: 40px;
-            background: #000;
-            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 20px;
+            font-size: 24px;
+            transition: all 0.3s ease;
         }
 
-        body.night-theme .contact-icon {
-            background: #444;
+        .contact-icon.tg-icon { background: #229ED9; }
+        .contact-icon.vk-icon { background: #4C75A3; }
+        .contact-icon.phone-icon { background: #34C759; }
+
+        .contact-item:hover .contact-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
-        /* Иконки для соцсетей */
-        .contact-icon.tg-icon {
-            background: #229ED9;
-        }
-
-        .contact-icon.vk-icon {
-            background: #4C75A3;
-        }
-
-        .contact-icon.phone-icon {
-            background: #34C759;
-        }
-
-        .contact-info {
-            flex: 1;
-        }
-
-        .contact-label {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 2px;
-        }
-
-        .contact-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: #000;
-        }
-
-        body.night-theme .contact-value {
-            color: #fff;
-        }
-
-        .contact-action {
-            color: #999;
-            font-size: 12px;
-        }
-
+        /* Кнопка чата */
         .chat-button {
             width: 100%;
-            background: #000;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
             color: white;
             border: none;
-            border-radius: 16px;
+            border-radius: 24px;
             padding: 18px;
             font-size: 16px;
             font-weight: 600;
@@ -748,304 +848,357 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             margin-top: 20px;
-            transition: transform 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 20px rgba(0,122,255,0.3);
         }
 
-        body.night-theme .chat-button {
-            background: #444;
+        .chat-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0,122,255,0.4);
         }
 
         .chat-button:active {
             transform: scale(0.98);
         }
+
+        .chat-button i {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-button:hover i {
+            transform: translateX(5px);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Шапка - теперь прилипает -->
+        <!-- Шапка -->
         <div class="header">
             <div class="logo">
-                🚗 AutoHelper
-                <span>TMA</span>
+                <i class="fas fa-car"></i> AutoHelper
+                <span><i class="fas fa-crown"></i> PREMIUM</span>
             </div>
             <div class="menu-button" onclick="toggleMenu()">
-                ☰
+                <i class="fas fa-bars"></i>
             </div>
         </div>
 
-        <!-- Меню с анимацией - теперь прилипает -->
+        <!-- Меню -->
         <div class="menu-panel" id="menuPanel">
-            <div class="menu-item" onclick="navigateToPage('settings-page'); toggleMenu();">⚙️ Настройки</div>
-            <div class="menu-item" onclick="navigateToPage('support-page'); toggleMenu();">🆘 Поддержка</div>
+            <div class="menu-item" onclick="navigateToPage('settings-page'); toggleMenu();">
+                <i class="fas fa-cog"></i> Настройки
+            </div>
+            <div class="menu-item" onclick="navigateToPage('support-page'); toggleMenu();">
+                <i class="fas fa-headset"></i> Поддержка
+            </div>
+            <div class="menu-item" onclick="showNotification('🚀 Обновление 2.0')">
+                <i class="fas fa-gift"></i> Что нового
+            </div>
         </div>
 
-        <!-- Контент (с отступом для нижней навигации) -->
+        <!-- Контент -->
         <div class="content">
-            <!-- Страница Home -->
+            <!-- Главная -->
             <div class="page active" id="home-page">
-                <!-- 3D модель автомобиля -->
+                <!-- 3D модель BMW -->
                 <div class="car-3d-container">
-                    <spline-viewer url="https://avatars.mds.yandex.net/i?id=c8c723ce7908aa085e1dd53010090f40_l-9098696-images-thumbs&n=13"></spline-viewer>
+                    <spline-viewer url="https://prod.spline.design/kZDDjO5qC9vDnJxS/scene.splinecode"></spline-viewer>
                 </div>
 
                 <!-- Приветствие -->
                 <div class="welcome">
-                    <h1>Привет, <span id="username">друг</span></h1>
-                    <p>Ваш автомобиль готов к поездке</p>
+                    <h1><i class="fas fa-hand-wave"></i> Привет, <span id="username">друг</span></h1>
+                    <p><i class="fas fa-circle-check"></i> Ваш автомобиль готов к поездке</p>
                 </div>
 
-                <!-- Статус авто - обновленный цвет -->
+                <!-- Статус авто -->
                 <div class="car-status">
-                    <h2>Текущее состояние</h2>
+                    <h2><i class="fas fa-gauge-high"></i> Текущее состояние</h2>
                     <div class="status-grid">
                         <div class="status-item">
-                            <span class="status-label">Масло</span>
-                            <span class="status-value status-good">32% • 3200 км</span>
+                            <span class="status-label"><i class="fas fa-oil-can"></i> Масло</span>
+                            <span class="status-value status-good">
+                                32% <span class="status-badge">3200 км</span>
+                            </span>
                         </div>
                         <div class="status-item">
-                            <span class="status-label">Тормоза</span>
+                            <span class="status-label"><i class="fas fa-brake-warning"></i> Тормоза</span>
                             <span class="status-value status-good">85%</span>
                         </div>
                         <div class="status-item">
-                            <span class="status-label">Аккумулятор</span>
-                            <span class="status-value status-warn">12.1V ⚠️</span>
+                            <span class="status-label"><i class="fas fa-car-battery"></i> Аккумулятор</span>
+                            <span class="status-value status-warn">
+                                12.1V <i class="fas fa-triangle-exclamation"></i>
+                            </span>
                         </div>
                         <div class="status-item">
-                            <span class="status-label">Шины</span>
+                            <span class="status-label"><i class="fas fa-tire"></i> Шины</span>
                             <span class="status-value status-good">2.3 бар</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Основные функции -->
+                <!-- Функции -->
                 <div class="functions">
-                    <!-- Диагностика -->
                     <div class="function-card" onclick="toggleDiagnostics()">
-                        <div class="function-icon">🔍</div>
+                        <div class="function-icon"><i class="fas fa-microchip"></i></div>
                         <div class="function-info">
-                            <h3>Диагностика</h3>
+                            <h3><i class="fas fa-search"></i> Диагностика</h3>
                             <p>Проверить все системы</p>
                         </div>
-                        <div class="arrow" id="diagnostics-arrow">›</div>
+                        <div class="arrow" id="diagnostics-arrow"><i class="fas fa-chevron-right"></i></div>
                     </div>
-                    <!-- Результат диагностики -->
                     <div class="result-panel" id="diagnostics-result"></div>
 
-                    <!-- Найти СТО -->
                     <div class="function-card" onclick="toggleServices()">
-                        <div class="function-icon">🔧</div>
+                        <div class="function-icon"><i class="fas fa-wrench"></i></div>
                         <div class="function-info">
-                            <h3>Найти СТО</h3>
+                            <h3><i class="fas fa-map-pin"></i> Найти СТО</h3>
                             <p>Сервисы рядом с вами</p>
                         </div>
-                        <div class="arrow" id="services-arrow">›</div>
+                        <div class="arrow" id="services-arrow"><i class="fas fa-chevron-right"></i></div>
                     </div>
-                    <!-- Результат поиска СТО -->
                     <div class="result-panel" id="services-result"></div>
 
-                    <!-- История -->
                     <div class="function-card" onclick="toggleHistory()">
-                        <div class="function-icon">📊</div>
+                        <div class="function-icon"><i class="fas fa-chart-line"></i></div>
                         <div class="function-info">
-                            <h3>История</h3>
+                            <h3><i class="fas fa-clock-rotate-left"></i> История</h3>
                             <p>Все ремонты и ТО</p>
                         </div>
-                        <div class="arrow" id="history-arrow">›</div>
+                        <div class="arrow" id="history-arrow"><i class="fas fa-chevron-right"></i></div>
                     </div>
-                    <!-- Результат истории -->
                     <div class="result-panel" id="history-result"></div>
                 </div>
 
                 <!-- Последние события -->
                 <div class="history">
                     <div class="history-header">
-                        <h3>Последние события</h3>
-                        <a onclick="showAllHistory()">Все</a>
+                        <h3><i class="fas fa-calendar"></i> Последние события</h3>
+                        <a onclick="showAllHistory()"><i class="fas fa-arrow-right"></i> Все</a>
                     </div>
                     <div class="history-item" onclick="showHistoryDetail('oil')">
                         <div>
-                            <div class="history-date">15 марта 2024</div>
+                            <div class="history-date"><i class="far fa-calendar"></i> 15 марта 2024</div>
                             <div class="history-title">Замена масла</div>
                             <div class="history-price">5 900 ₽</div>
                         </div>
-                        <div class="history-arrow">›</div>
+                        <div class="history-arrow"><i class="fas fa-arrow-right"></i></div>
                     </div>
                     <div class="history-item" onclick="showHistoryDetail('brakes')">
                         <div>
-                            <div class="history-date">2 марта 2024</div>
+                            <div class="history-date"><i class="far fa-calendar"></i> 2 марта 2024</div>
                             <div class="history-title">Колодки передние</div>
                             <div class="history-price">4 500 ₽</div>
                         </div>
-                        <div class="history-arrow">›</div>
+                        <div class="history-arrow"><i class="fas fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Страница Диагностика -->
+            <!-- Диагностика -->
             <div class="page" id="diagnostics-page">
-                <div style="margin-bottom: 20px;">
-                    <h1 style="font-size: 24px; margin-bottom: 16px;">🔍 Диагностика</h1>
-                    <div class="diagnostics-list">
-                        <div class="result-item"><span>Двигатель</span><span style="color: #4cd964;">✅ ОК</span></div>
-                        <div class="result-item"><span>Тормозная система</span><span style="color: #4cd964;">✅ ОК</span></div>
-                        <div class="result-item"><span>Аккумулятор</span><span style="color: #ffcc00;">⚠️ 12.1V (низкий)</span></div>
-                        <div class="result-item"><span>Масло</span><span style="color: #4cd964;">✅ 32%</span></div>
-                        <div class="result-item"><span>Шины</span><span style="color: #4cd964;">✅ 2.3 бар</span></div>
+                <h1 style="font-size: 28px; margin-bottom: 20px;"><i class="fas fa-microchip"></i> Диагностика</h1>
+                <div class="diagnostics-list">
+                    <div class="result-item">
+                        <span><i class="fas fa-engine" style="color: #4cd964;"></i> Двигатель</span>
+                        <span style="color: #4cd964;"><i class="fas fa-check-circle"></i> ОК</span>
                     </div>
-                    <p style="margin-top: 16px; color: #ffcc00;">Рекомендация: Проверьте аккумулятор</p>
+                    <div class="result-item">
+                        <span><i class="fas fa-brake-warning"></i> Тормозная система</span>
+                        <span style="color: #4cd964;"><i class="fas fa-check-circle"></i> ОК</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-car-battery"></i> Аккумулятор</span>
+                        <span style="color: #ffcc00;"><i class="fas fa-exclamation-triangle"></i> 12.1V</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-oil-can"></i> Масло</span>
+                        <span style="color: #4cd964;"><i class="fas fa-check-circle"></i> 32%</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-tire"></i> Шины</span>
+                        <span style="color: #4cd964;"><i class="fas fa-check-circle"></i> 2.3 бар</span>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 16px; background: rgba(255,204,0,0.1); border-radius: 20px; color: #ffcc00;">
+                    <i class="fas fa-lightbulb"></i> Рекомендация: Проверьте аккумулятор
                 </div>
             </div>
 
-            <!-- Страница Сервисы (УФИМСКИЕ) -->
+            <!-- Сервисы -->
             <div class="page" id="services-page">
-                <div style="margin-bottom: 20px;">
-                    <h1 style="font-size: 24px; margin-bottom: 16px;">🔧 Сервисы в Уфе</h1>
-                    <div class="diagnostics-list">
-                        <div class="result-item"><span>🚗 СТО на Менделеева</span><span>★4.8</span></div>
-                        <div class="result-item"><span>🔧 Башавтокомплект</span><span>★4.7</span></div>
-                        <div class="result-item"><span>⭐ Уфа-Лада</span><span>★4.9</span></div>
-                        <div class="result-item"><span>🔨 Автосервис на Комсомольской</span><span>★4.6</span></div>
-                        <div class="result-item"><span>🛠️ Техцентр на Российской</span><span>★4.8</span></div>
+                <h1 style="font-size: 28px; margin-bottom: 20px;"><i class="fas fa-wrench"></i> Сервисы в Уфе</h1>
+                <div class="diagnostics-list">
+                    <div class="result-item">
+                        <span><i class="fas fa-location-dot"></i> СТО на Менделеева</span>
+                        <span><i class="fas fa-star" style="color: #ffcc00;"></i> 4.8</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-location-dot"></i> Башавтокомплект</span>
+                        <span><i class="fas fa-star" style="color: #ffcc00;"></i> 4.7</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-location-dot"></i> Уфа-Лада</span>
+                        <span><i class="fas fa-star" style="color: #ffcc00;"></i> 4.9</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-location-dot"></i> Автосервис на Комсомольской</span>
+                        <span><i class="fas fa-star" style="color: #ffcc00;"></i> 4.6</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-location-dot"></i> Техцентр на Российской</span>
+                        <span><i class="fas fa-star" style="color: #ffcc00;"></i> 4.8</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Страница Профиль -->
+            <!-- Профиль -->
             <div class="page" id="profile-page">
-                <div style="margin-bottom: 20px;">
-                    <h1 style="font-size: 24px; margin-bottom: 16px;">👤 Профиль</h1>
-                    <div class="diagnostics-list">
-                        <div class="result-item"><span>Имя</span><span id="profile-name">Загрузка...</span></div>
-                        <div class="result-item"><span>Автомобиль</span><span>BMW X5</span></div>
-                        <div class="result-item"><span>Год</span><span>2021</span></div>
-                        <div class="result-item"><span>Пробег</span><span>45,000 км</span></div>
+                <h1 style="font-size: 28px; margin-bottom: 20px;"><i class="fas fa-user"></i> Профиль</h1>
+                <div class="diagnostics-list">
+                    <div class="result-item">
+                        <span><i class="fas fa-user-circle"></i> Имя</span>
+                        <span id="profile-name">Загрузка...</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-car"></i> Автомобиль</span>
+                        <span>BMW X5</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-calendar"></i> Год</span>
+                        <span>2021</span>
+                    </div>
+                    <div class="result-item">
+                        <span><i class="fas fa-road"></i> Пробег</span>
+                        <span>45,000 км</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Страница Настройки -->
+            <!-- Настройки -->
             <div class="page" id="settings-page">
-                <div style="margin-bottom: 20px;">
-                    <h1 style="font-size: 24px; margin-bottom: 16px;">⚙️ Настройки</h1>
-                    <div class="settings-item">
-                        <span>🌙 Ночная тема</span>
-                        <div class="toggle-switch" id="theme-toggle" onclick="toggleTheme()"></div>
-                    </div>
+                <h1 style="font-size: 28px; margin-bottom: 20px;"><i class="fas fa-cog"></i> Настройки</h1>
+                <div class="settings-item">
+                    <span><i class="fas fa-moon"></i> Ночная тема</span>
+                    <div class="toggle-switch" id="theme-toggle" onclick="toggleTheme()"></div>
+                </div>
+                <div class="settings-item" style="margin-top: 12px;">
+                    <span><i class="fas fa-bell"></i> Уведомления</span>
+                    <div class="toggle-switch" id="notifications-toggle" onclick="toggleNotifications()"></div>
                 </div>
             </div>
 
-            <!-- Страница Поддержка -->
+            <!-- Поддержка -->
             <div class="page" id="support-page">
-                <div style="margin-bottom: 20px;">
-                    <h1 style="font-size: 24px; margin-bottom: 16px;">🆘 Поддержка</h1>
-                    
-                    <div class="support-card">
-                        <div class="support-title">Контакты</div>
-                        
-                        <!-- Номер телефона -->
-                        <div class="contact-item" onclick="copyToClipboard('+79871494882')">
-                            <div class="contact-icon phone-icon">📞</div>
-                            <div class="contact-info">
-                                <div class="contact-label">Телефон</div>
-                                <div class="contact-value">+7 (987) 149-48-82</div>
-                            </div>
-                            <div class="contact-action">скопировать</div>
-                        </div>
-                        
-                        <!-- VK с фирменным цветом -->
-                        <div class="contact-item" onclick="openVK()">
-                            <div class="contact-icon vk-icon">VK</div>
-                            <div class="contact-info">
-                                <div class="contact-label">ВКонтакте</div>
-                                <div class="contact-value">@metamrphsis</div>
-                            </div>
-                            <div class="contact-action">открыть</div>
-                        </div>
-                        
-                        <!-- Telegram с фирменным цветом -->
-                        <div class="contact-item" onclick="openTelegram()">
-                            <div class="contact-icon tg-icon">📱</div>
-                            <div class="contact-info">
-                                <div class="contact-label">Telegram</div>
-                                <div class="contact-value">@qwqrwqqwwqq</div>
-                            </div>
-                            <div class="contact-action">открыть</div>
-                        </div>
+                <h1 style="font-size: 28px; margin-bottom: 20px;"><i class="fas fa-headset"></i> Поддержка</h1>
+                
+                <div class="support-card">
+                    <div style="margin-bottom: 16px;">
+                        <i class="fas fa-phone-alt"></i> Контакты
                     </div>
                     
-                    <!-- Кнопка чата -->
-                    <button class="chat-button" onclick="openChat()">
-                        Написать в чат →
-                    </button>
+                    <div class="contact-item" onclick="copyToClipboard('+79871494882')">
+                        <div class="contact-icon phone-icon"><i class="fas fa-phone"></i></div>
+                        <div class="contact-info">
+                            <div style="font-size: 12px; color: #999;">Телефон</div>
+                            <div style="font-size: 16px; font-weight: 600;">+7 (987) 149-48-82</div>
+                        </div>
+                        <div style="color: #007AFF;"><i class="fas fa-copy"></i></div>
+                    </div>
+                    
+                    <div class="contact-item" onclick="openVK()">
+                        <div class="contact-icon vk-icon"><i class="fab fa-vk"></i></div>
+                        <div class="contact-info">
+                            <div style="font-size: 12px; color: #999;">ВКонтакте</div>
+                            <div style="font-size: 16px; font-weight: 600;">@metamrphsis</div>
+                        </div>
+                        <div style="color: #007AFF;"><i class="fas fa-external-link-alt"></i></div>
+                    </div>
+                    
+                    <div class="contact-item" onclick="openTelegram()">
+                        <div class="contact-icon tg-icon"><i class="fab fa-telegram-plane"></i></div>
+                        <div class="contact-info">
+                            <div style="font-size: 12px; color: #999;">Telegram</div>
+                            <div style="font-size: 16px; font-weight: 600;">@qwqrwqqwwqq</div>
+                        </div>
+                        <div style="color: #007AFF;"><i class="fas fa-external-link-alt"></i></div>
+                    </div>
                 </div>
+                
+                <button class="chat-button" onclick="openChat()">
+                    <i class="fab fa-telegram-plane"></i> Написать в чат
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Нижняя навигация - более прозрачная с обводкой -->
+        <!-- Нижняя навигация -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="navigateToPage('home')">
-                <span></span>
+                <i class="fas fa-home"></i>
                 <span>Главная</span>
             </div>
             <div class="nav-item" onclick="navigateToPage('diagnostics-page')">
-                <span></span>
+                <i class="fas fa-microchip"></i>
                 <span>Диагностика</span>
             </div>
             <div class="nav-item" onclick="navigateToPage('services-page')">
-                <span></span>
+                <i class="fas fa-wrench"></i>
                 <span>Сервисы</span>
             </div>
             <div class="nav-item" onclick="navigateToPage('profile-page')">
-                <span></span>
+                <i class="fas fa-user"></i>
                 <span>Профиль</span>
             </div>
         </div>
 
-        <!-- Модальное окно для уведомлений -->
+        <!-- Модальное окно -->
         <div class="modal" id="modal"></div>
     </div>
 
     <script>
-        // Инициализация Telegram
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
-        // Получаем имя пользователя из Telegram
         const user = tg.initDataUnsafe?.user;
         const username = user?.first_name || user?.username || 'друг';
         document.getElementById('username').textContent = username;
         document.getElementById('profile-name').textContent = username;
 
-        // Проверяем сохраненную тему
+        // Тема
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'night') {
             document.body.classList.add('night-theme');
             document.getElementById('theme-toggle').classList.add('active');
         }
 
-        // Переключение темы
+        // Уведомления (заглушка)
+        document.getElementById('notifications-toggle').classList.add('active');
+
         function toggleTheme() {
             const toggle = document.getElementById('theme-toggle');
             document.body.classList.toggle('night-theme');
             toggle.classList.toggle('active');
-            
-            // Сохраняем выбор
-            if (document.body.classList.contains('night-theme')) {
-                localStorage.setItem('theme', 'night');
-            } else {
-                localStorage.setItem('theme', 'day');
-            }
-            
-            showNotification(document.body.classList.contains('night-theme') ? '🌙 Ночная тема включена' : '☀️ Дневная тема включена');
+            localStorage.setItem('theme', document.body.classList.contains('night-theme') ? 'night' : 'day');
+            showNotification(document.body.classList.contains('night-theme') ? '🌙 Ночная тема' : '☀️ Дневная тема');
         }
 
-        // Функции для поддержки
+        function toggleNotifications() {
+            const toggle = document.getElementById('notifications-toggle');
+            toggle.classList.toggle('active');
+            showNotification(toggle.classList.contains('active') ? '🔔 Уведомления включены' : '🔕 Уведомления отключены');
+        }
+
+        // Контакты
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 showNotification('📋 Номер скопирован');
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             });
         }
 
@@ -1064,48 +1217,37 @@
             showNotification('💬 Открываю чат...');
         }
 
-        // Переключение страниц
+        // Навигация
         function navigateToPage(pageId) {
-            // Скрываем все страницы
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             
-            // Показываем нужную страницу
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            
-            // Обновляем активный пункт в навигации
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Находим какой nav-item соответствует странице и делаем активным
-            const navItems = document.querySelectorAll('.nav-item');
-            if (pageId === 'home' || pageId === 'home-page') {
-                navItems[0].classList.add('active');
+            if (pageId === 'home') {
                 document.getElementById('home-page').classList.add('active');
-            } else if (pageId === 'diagnostics-page') {
-                navItems[1].classList.add('active');
-            } else if (pageId === 'services-page') {
-                navItems[2].classList.add('active');
-            } else if (pageId === 'profile-page') {
-                navItems[3].classList.add('active');
+            } else {
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) targetPage.classList.add('active');
             }
             
-            // Закрываем меню если открыто
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            if (pageId === 'home') navItems[0].classList.add('active');
+            else if (pageId === 'diagnostics-page') navItems[1].classList.add('active');
+            else if (pageId === 'services-page') navItems[2].classList.add('active');
+            else if (pageId === 'profile-page') navItems[3].classList.add('active');
+            
             document.getElementById('menuPanel').classList.remove('open');
+            
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Открытие/закрытие меню с анимацией
         function toggleMenu() {
             const menu = document.getElementById('menuPanel');
             menu.classList.toggle('open');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Переключение диагностики
+        // Функции для карточек
         function toggleDiagnostics() {
             const result = document.getElementById('diagnostics-result');
             const arrow = document.getElementById('diagnostics-arrow');
@@ -1114,34 +1256,32 @@
                 result.classList.remove('show');
                 arrow.classList.remove('rotated');
             } else {
-                // Закрываем другие
                 document.getElementById('services-result').classList.remove('show');
                 document.getElementById('history-result').classList.remove('show');
                 document.getElementById('services-arrow').classList.remove('rotated');
                 document.getElementById('history-arrow').classList.remove('rotated');
                 
-                // Показываем диагностику
-                result.innerHTML = '<div class="result-title">🔍 Результаты диагностики:</div>';
+                result.innerHTML = '<div class="result-title"><i class="fas fa-microchip"></i> Результаты диагностики:</div>';
                 
                 const checks = [
-                    { name: 'Двигатель', status: '✅ ОК' },
-                    { name: 'Тормозная система', status: '✅ ОК' },
-                    { name: 'Аккумулятор', status: '⚠️ 12.1V (низкий)' },
-                    { name: 'Масло', status: '✅ 32%' },
-                    { name: 'Шины', status: '✅ 2.3 бар' }
+                    { name: 'Двигатель', status: '✅ ОК', icon: 'fa-engine' },
+                    { name: 'Тормозная система', status: '✅ ОК', icon: 'fa-brake-warning' },
+                    { name: 'Аккумулятор', status: '⚠️ 12.1V', icon: 'fa-car-battery' },
+                    { name: 'Масло', status: '✅ 32%', icon: 'fa-oil-can' },
+                    { name: 'Шины', status: '✅ 2.3 бар', icon: 'fa-tire' }
                 ];
                 
                 checks.forEach(check => {
-                    result.innerHTML += `<div class="result-item"><span>${check.name}</span><span>${check.status}</span></div>`;
+                    result.innerHTML += `<div class="result-item"><span><i class="fas ${check.icon}"></i> ${check.name}</span><span>${check.status}</span></div>`;
                 });
                 
-                result.innerHTML += '<div style="margin-top:12px; color:#ffcc00;">Рекомендация: Проверьте аккумулятор</div>';
+                result.innerHTML += '<div style="margin-top:12px; color:#ffcc00;"><i class="fas fa-lightbulb"></i> Проверьте аккумулятор</div>';
                 result.classList.add('show');
                 arrow.classList.add('rotated');
             }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Переключение сервисов
         function toggleServices() {
             const result = document.getElementById('services-result');
             const arrow = document.getElementById('services-arrow');
@@ -1150,33 +1290,31 @@
                 result.classList.remove('show');
                 arrow.classList.remove('rotated');
             } else {
-                // Закрываем другие
                 document.getElementById('diagnostics-result').classList.remove('show');
                 document.getElementById('history-result').classList.remove('show');
                 document.getElementById('diagnostics-arrow').classList.remove('rotated');
                 document.getElementById('history-arrow').classList.remove('rotated');
                 
-                // Показываем сервисы (УФИМСКИЕ)
-                result.innerHTML = '<div class="result-title">🔧 Сервисы в Уфе:</div>';
+                result.innerHTML = '<div class="result-title"><i class="fas fa-wrench"></i> Сервисы в Уфе:</div>';
                 
                 const services = [
-                    { name: 'СТО на Менделеева', dist: '', rating: '4.8' },
-                    { name: 'Башавтокомплект', dist: '', rating: '4.7' },
-                    { name: 'Уфа-Лада', dist: '', rating: '4.9' },
-                    { name: 'Автосервис на Комсомольской', dist: '', rating: '4.6' },
-                    { name: 'Техцентр на Российской', dist: '', rating: '4.8' }
+                    { name: 'СТО на Менделеева', rating: '4.8' },
+                    { name: 'Башавтокомплект', rating: '4.7' },
+                    { name: 'Уфа-Лада', rating: '4.9' },
+                    { name: 'Автосервис на Комсомольской', rating: '4.6' },
+                    { name: 'Техцентр на Российской', rating: '4.8' }
                 ];
                 
                 services.forEach(service => {
-                    result.innerHTML += `<div class="result-item"><span>${service.name}</span><span>${service.dist} ★${service.rating}</span></div>`;
+                    result.innerHTML += `<div class="result-item"><span><i class="fas fa-location-dot"></i> ${service.name}</span><span><i class="fas fa-star" style="color: #ffcc00;"></i> ${service.rating}</span></div>`;
                 });
                 
                 result.classList.add('show');
                 arrow.classList.add('rotated');
             }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Переключение истории
         function toggleHistory() {
             const result = document.getElementById('history-result');
             const arrow = document.getElementById('history-arrow');
@@ -1185,14 +1323,12 @@
                 result.classList.remove('show');
                 arrow.classList.remove('rotated');
             } else {
-                // Закрываем другие
                 document.getElementById('diagnostics-result').classList.remove('show');
                 document.getElementById('services-result').classList.remove('show');
                 document.getElementById('diagnostics-arrow').classList.remove('rotated');
                 document.getElementById('services-arrow').classList.remove('rotated');
                 
-                // Показываем историю
-                result.innerHTML = '<div class="result-title">📊 Последние 3 записи:</div>';
+                result.innerHTML = '<div class="result-title"><i class="fas fa-clock-rotate-left"></i> Последние 3 записи:</div>';
                 
                 const history = [
                     { date: '15.03', desc: 'Замена масла', cost: '5 900 ₽' },
@@ -1207,22 +1343,23 @@
                 result.classList.add('show');
                 arrow.classList.add('rotated');
             }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Детали истории
         function showHistoryDetail(type) {
             if (type === 'oil') showNotification('Замена масла 15.03.2024 • 5 900 ₽ • Лукойл 5W-30');
             else if (type === 'brakes') showNotification('Колодки передние 02.03.2024 • 4 500 ₽ • TRW');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         function showAllHistory() {
-            showNotification('Вся история в разработке');
+            showNotification('📋 Вся история в разработке');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Уведомления
         function showNotification(message) {
             const modal = document.getElementById('modal');
-            modal.textContent = message;
+            modal.innerHTML = message;
             modal.classList.add('show');
             
             setTimeout(() => {
@@ -1234,15 +1371,9 @@
             }
         }
 
-        // Обработка кнопки назад
         tg.onEvent('backButtonClicked', () => {
             tg.close();
         });
     </script>
-
-    <!-- Создаем пустой файл app.js для будущих URL картинок -->
-    <!-- app.js - здесь можно будет вставить URL картинок позже -->
 </body>
 </html>
-
-
