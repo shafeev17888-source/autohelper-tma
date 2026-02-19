@@ -903,11 +903,11 @@
                 <div style="margin-bottom: 20px;">
                     <h1 style="font-size: 24px; margin-bottom: 16px;">🔧 Сервисы в Уфе</h1>
                     <div class="diagnostics-list">
-                        <div class="result-item"><span>🚗 СТО на Менделеева</span><span>1.2 км ★4.8</span></div>
-                        <div class="result-item"><span>🔧 Башавтокомплект</span><span>2.5 км ★4.7</span></div>
-                        <div class="result-item"><span>⭐ Уфа-Лада</span><span>3.1 км ★4.9</span></div>
-                        <div class="result-item"><span>🔨 Автосервис на Комсомольской</span><span>1.8 км ★4.6</span></div>
-                        <div class="result-item"><span>🛠️ Техцентр на Российской</span><span>2.2 км ★4.8</span></div>
+                        <div class="result-item"><span>🚗 СТО на Менделеева</span><span>★4.8</span></div>
+                        <div class="result-item"><span>🔧 Башавтокомплект</span><span>★4.7</span></div>
+                        <div class="result-item"><span>⭐ Уфа-Лада</span><span>★4.9</span></div>
+                        <div class="result-item"><span>🔨 Автосервис на Комсомольской</span><span>★4.6</span></div>
+                        <div class="result-item"><span>🛠️ Техцентр на Российской</span><span>★4.8</span></div>
                     </div>
                 </div>
             </div>
@@ -986,19 +986,19 @@
         <!-- Нижняя навигация - более прозрачная с обводкой -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="navigateToPage('home')">
-                <span>🏠</span>
+                <span></span>
                 <span>Главная</span>
             </div>
             <div class="nav-item" onclick="navigateToPage('diagnostics-page')">
-                <span>🔍</span>
+                <span></span>
                 <span>Диагностика</span>
             </div>
             <div class="nav-item" onclick="navigateToPage('services-page')">
-                <span>🔧</span>
+                <span></span>
                 <span>Сервисы</span>
             </div>
             <div class="nav-item" onclick="navigateToPage('profile-page')">
-                <span>👤</span>
+                <span></span>
                 <span>Профиль</span>
             </div>
         </div>
@@ -1160,11 +1160,11 @@
                 result.innerHTML = '<div class="result-title">🔧 Сервисы в Уфе:</div>';
                 
                 const services = [
-                    { name: 'СТО на Менделеева', dist: '1.2 км', rating: '4.8' },
-                    { name: 'Башавтокомплект', dist: '2.5 км', rating: '4.7' },
-                    { name: 'Уфа-Лада', dist: '3.1 км', rating: '4.9' },
-                    { name: 'Автосервис на Комсомольской', dist: '1.8 км', rating: '4.6' },
-                    { name: 'Техцентр на Российской', dist: '2.2 км', rating: '4.8' }
+                    { name: 'СТО на Менделеева', dist: '', rating: '4.8' },
+                    { name: 'Башавтокомплект', dist: '', rating: '4.7' },
+                    { name: 'Уфа-Лада', dist: '', rating: '4.9' },
+                    { name: 'Автосервис на Комсомольской', dist: '', rating: '4.6' },
+                    { name: 'Техцентр на Российской', dist: '', rating: '4.8' }
                 ];
                 
                 services.forEach(service => {
@@ -1244,4 +1244,5 @@
     <!-- app.js - здесь можно будет вставить URL картинок позже -->
 </body>
 </html>
+
 
