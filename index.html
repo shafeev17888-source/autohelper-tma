@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Auto Helper • Премиум</title>
+    <title>Auto Helper</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключаем Spline для 3D -->
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.28/build/spline-viewer.js"></script>
+    <!-- Подключаем Three.js для простой 3D модели (работает везде) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
     <!-- Библиотека для анимированных иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -47,9 +53,9 @@
         }
 
         @keyframes glow {
-            0% { box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-            50% { box-shadow: 0 0 20px rgba(0,0,0,0.2); }
-            100% { box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+            0% { box-shadow: 0 0 5px rgba(0,122,255,0.2); }
+            50% { box-shadow: 0 0 20px rgba(0,122,255,0.4); }
+            100% { box-shadow: 0 0 5px rgba(0,122,255,0.2); }
         }
 
         body {
@@ -153,16 +159,6 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        .logo span {
-            background: linear-gradient(135deg, #007AFF, #5856D6);
-            color: white;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: 400;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
         .menu-button {
             width: 44px;
             height: 44px;
@@ -235,7 +231,7 @@
             border-bottom: none;
         }
 
-        /* 3D модель с градиентной анимацией */
+        /* 3D модель на Three.js (работает везде) */
         .car-3d-container {
             width: 100%;
             height: 280px;
@@ -255,10 +251,11 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
 
-        spline-viewer {
+        #canvas-container {
             width: 100%;
             height: 100%;
-            background: transparent;
+            position: relative;
+            z-index: 1;
         }
 
         /* Приветствие с анимацией */
@@ -879,7 +876,6 @@
         <div class="header">
             <div class="logo">
                 <i class="fas fa-car"></i> AutoHelper
-                <span><i class="fas fa-crown"></i> PREMIUM</span>
             </div>
             <div class="menu-button" onclick="toggleMenu()">
                 <i class="fas fa-bars"></i>
@@ -894,8 +890,8 @@
             <div class="menu-item" onclick="navigateToPage('support-page'); toggleMenu();">
                 <i class="fas fa-headset"></i> Поддержка
             </div>
-            <div class="menu-item" onclick="showNotification('🚀 Обновление 2.0')">
-                <i class="fas fa-gift"></i> Что нового
+            <div class="menu-item" onclick="showNotification('🚀 Версия 1.0')">
+                <i class="fas fa-info-circle"></i> О приложении
             </div>
         </div>
 
@@ -903,9 +899,9 @@
         <div class="content">
             <!-- Главная -->
             <div class="page active" id="home-page">
-                <!-- 3D модель BMW -->
+                <!-- 3D модель на Three.js -->
                 <div class="car-3d-container">
-                    <spline-viewer url="https://prod.spline.design/kZDDjO5qC9vDnJxS/scene.splinecode"></spline-viewer>
+                    <div id="canvas-container"></div>
                 </div>
 
                 <!-- Приветствие -->
@@ -1160,11 +1156,209 @@
         <div class="modal" id="modal"></div>
     </div>
 
-    <script>
+    <script type="module">
+        // Импортируем Three.js
+        import * as THREE from 'three';
+        import { OrbitControls } from 'https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+
+        // Инициализация сцены
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = null; // Прозрачный фон
+        
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(5, 2, 8);
+        camera.lookAt(0, 0, 0);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        // Добавляем свет
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(2, 5, 3);
+        directionalLight.castShadow = true;
+        directionalLight.receiveShadow = true;
+        scene.add(directionalLight);
+
+        const backLight = new THREE.PointLight(0x4466ff, 0.5);
+        backLight.position.set(-2, 1, -3);
+        scene.add(backLight);
+
+        // Добавляем легкий туман для глубины
+        scene.fog = new THREE.FogExp2(0x000000, 0.02);
+
+        // Создаем простую модель автомобиля
+        const carGroup = new THREE.Group();
+
+        // Кузов
+        const bodyGeometry = new THREE.BoxGeometry(2.5, 0.8, 1.2);
+        const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x3366ff, metalness: 0.7, roughness: 0.3, emissive: new THREE.Color(0x112244) });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        body.position.y = 0.6;
+        body.castShadow = true;
+        body.receiveShadow = true;
+        carGroup.add(body);
+
+        // Кабина
+        const cabinGeometry = new THREE.BoxGeometry(1.2, 0.6, 1.1);
+        const cabinMaterial = new THREE.MeshStandardMaterial({ color: 0x44aaff, metalness: 0.3, roughness: 0.4, emissive: new THREE.Color(0x113355) });
+        const cabin = new THREE.Mesh(cabinGeometry, cabinMaterial);
+        cabin.position.set(-0.4, 1.1, 0);
+        cabin.castShadow = true;
+        cabin.receiveShadow = true;
+        carGroup.add(cabin);
+
+        // Капот
+        const hoodGeometry = new THREE.BoxGeometry(0.8, 0.4, 1.1);
+        const hoodMaterial = new THREE.MeshStandardMaterial({ color: 0x3366ff, metalness: 0.8, roughness: 0.2 });
+        const hood = new THREE.Mesh(hoodGeometry, hoodMaterial);
+        hood.position.set(1.0, 0.9, 0);
+        hood.castShadow = true;
+        hood.receiveShadow = true;
+        carGroup.add(hood);
+
+        // Колеса
+        const wheelGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 32);
+        const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7, metalness: 0.3 });
+        
+        // Диски
+        const rimGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.31, 8);
+        const rimMaterial = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.9, roughness: 0.1 });
+
+        const positions = [
+            { x: -0.8, y: 0.4, z: -0.7 },
+            { x: 0.8, y: 0.4, z: -0.7 },
+            { x: -0.8, y: 0.4, z: 0.7 },
+            { x: 0.8, y: 0.4, z: 0.7 }
+        ];
+
+        positions.forEach(pos => {
+            const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            wheel.rotation.z = Math.PI / 2;
+            wheel.position.set(pos.x, pos.y, pos.z);
+            wheel.castShadow = true;
+            wheel.receiveShadow = true;
+            carGroup.add(wheel);
+
+            const rim = new THREE.Mesh(rimGeometry, rimMaterial);
+            rim.rotation.z = Math.PI / 2;
+            rim.position.set(pos.x, pos.y, pos.z);
+            rim.castShadow = true;
+            rim.receiveShadow = true;
+            carGroup.add(rim);
+        });
+
+        // Фары
+        const headlightGeometry = new THREE.SphereGeometry(0.15, 16);
+        const headlightMaterial = new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: new THREE.Color(0x442200) });
+        
+        const headlightLeft = new THREE.Mesh(headlightGeometry, headlightMaterial);
+        headlightLeft.position.set(1.3, 0.8, -0.4);
+        carGroup.add(headlightLeft);
+        
+        const headlightRight = new THREE.Mesh(headlightGeometry, headlightMaterial);
+        headlightRight.position.set(1.3, 0.8, 0.4);
+        carGroup.add(headlightRight);
+
+        // Стекла
+        const windowMaterial = new THREE.MeshStandardMaterial({ color: 0x88aaff, transparent: true, opacity: 0.6, emissive: new THREE.Color(0x112233) });
+        
+        const windshieldGeometry = new THREE.BoxGeometry(1.1, 0.5, 0.05);
+        const windshield = new THREE.Mesh(windshieldGeometry, windowMaterial);
+        windshield.position.set(-0.4, 1.3, 0.55);
+        carGroup.add(windshield);
+        
+        const rearWindow = new THREE.Mesh(windshieldGeometry, windowMaterial);
+        rearWindow.position.set(-0.4, 1.3, -0.55);
+        carGroup.add(rearWindow);
+
+        scene.add(carGroup);
+
+        // Добавляем несколько парящих частиц для эффекта
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 50;
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i += 3) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+            posArray[i+1] = (Math.random() - 0.5) * 5;
+            posArray[i+2] = (Math.random() - 0.5) * 10;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            color: 0x4488ff,
+            transparent: true,
+            opacity: 0.5,
+            blending: THREE.AdditiveBlending
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Добавляем пол (невидимый, но для теней)
+        const groundGeometry = new THREE.PlaneGeometry(20, 20);
+        const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = 0;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Добавляем простые огни
+        const light1 = new THREE.PointLight(0x4466ff, 0.5);
+        light1.position.set(2, 3, 2);
+        scene.add(light1);
+
+        // Анимация
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            time += 0.01;
+            
+            // Вращаем автомобиль
+            carGroup.rotation.y = Math.sin(time * 0.5) * 0.3;
+            carGroup.position.y = Math.sin(time * 2) * 0.1;
+            
+            // Вращаем колеса
+            carGroup.children.forEach(child => {
+                if (child.geometry && child.geometry.type === 'CylinderGeometry' && child.position.y === 0.4) {
+                    child.rotation.x += 0.05;
+                }
+            });
+            
+            // Вращаем частицы
+            particlesMesh.rotation.y += 0.001;
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+
+        // Обработка ресайза
+        window.addEventListener('resize', () => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        // Инициализация Telegram (остальной код)
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
+        // Получаем имя пользователя
         const user = tg.initDataUnsafe?.user;
         const username = user?.first_name || user?.username || 'друг';
         document.getElementById('username').textContent = username;
@@ -1188,11 +1382,15 @@
             showNotification(document.body.classList.contains('night-theme') ? '🌙 Ночная тема' : '☀️ Дневная тема');
         }
 
+        window.toggleTheme = toggleTheme;
+
         function toggleNotifications() {
             const toggle = document.getElementById('notifications-toggle');
             toggle.classList.toggle('active');
             showNotification(toggle.classList.contains('active') ? '🔔 Уведомления включены' : '🔕 Уведомления отключены');
         }
+
+        window.toggleNotifications = toggleNotifications;
 
         // Контакты
         function copyToClipboard(text) {
@@ -1202,20 +1400,28 @@
             });
         }
 
+        window.copyToClipboard = copyToClipboard;
+
         function openVK() {
             window.open('https://vk.com/metamrphsis', '_blank');
             showNotification('📱 Открываю VK...');
         }
+
+        window.openVK = openVK;
 
         function openTelegram() {
             window.open('https://t.me/qwqrwqqwwqq', '_blank');
             showNotification('📱 Открываю Telegram...');
         }
 
+        window.openTelegram = openTelegram;
+
         function openChat() {
             window.open('https://t.me/qwqrwqqwwqq', '_blank');
             showNotification('💬 Открываю чат...');
         }
+
+        window.openChat = openChat;
 
         // Навигация
         function navigateToPage(pageId) {
@@ -1241,11 +1447,15 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        window.navigateToPage = navigateToPage;
+
         function toggleMenu() {
             const menu = document.getElementById('menuPanel');
             menu.classList.toggle('open');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
+
+        window.toggleMenu = toggleMenu;
 
         // Функции для карточек
         function toggleDiagnostics() {
@@ -1282,6 +1492,8 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        window.toggleDiagnostics = toggleDiagnostics;
+
         function toggleServices() {
             const result = document.getElementById('services-result');
             const arrow = document.getElementById('services-arrow');
@@ -1315,6 +1527,8 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        window.toggleServices = toggleServices;
+
         function toggleHistory() {
             const result = document.getElementById('history-result');
             const arrow = document.getElementById('history-arrow');
@@ -1346,16 +1560,22 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        window.toggleHistory = toggleHistory;
+
         function showHistoryDetail(type) {
             if (type === 'oil') showNotification('Замена масла 15.03.2024 • 5 900 ₽ • Лукойл 5W-30');
             else if (type === 'brakes') showNotification('Колодки передние 02.03.2024 • 4 500 ₽ • TRW');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        window.showHistoryDetail = showHistoryDetail;
+
         function showAllHistory() {
             showNotification('📋 Вся история в разработке');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
+
+        window.showAllHistory = showAllHistory;
 
         function showNotification(message) {
             const modal = document.getElementById('modal');
@@ -1370,6 +1590,8 @@
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
+
+        window.showNotification = showNotification;
 
         tg.onEvent('backButtonClicked', () => {
             tg.close();
