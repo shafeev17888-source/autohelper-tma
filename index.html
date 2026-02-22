@@ -133,6 +133,11 @@
             backdrop-filter: blur(20px);
         }
 
+        body.night-theme .about-card {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+        }
+
         .container {
             max-width: 100%;
             margin: 0 auto;
@@ -193,7 +198,7 @@
             transform: scale(0.95);
         }
 
-        /* Меню поверх контента (без сдвига) */
+        /* Меню поверх контента */
         .menu-panel {
             background: rgba(255,255,255,0.95);
             border-radius: 24px;
@@ -240,7 +245,7 @@
             border-bottom: none;
         }
 
-        /* Затемнение фона при открытом меню */
+        /* Затемнение фона */
         .menu-overlay {
             display: none;
             position: fixed;
@@ -284,7 +289,7 @@
             z-index: 1;
         }
 
-        /* Индикатор загрузки */
+        /* Индикатор загрузки (без уведомлений) */
         .loading-indicator {
             position: absolute;
             top: 50%;
@@ -413,23 +418,38 @@
             font-size: 14px;
         }
 
+        /* Новая стилизация стрелки - овальная */
         .arrow {
             color: #999;
             font-size: 24px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.05);
+            border-radius: 20px; /* Овальная форма */
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .arrow.rotated {
             transform: rotate(90deg);
-            background: #007AFF;
-            color: white;
+            background: rgba(0,122,255,0.1);
+            border-color: #007AFF;
+            color: #007AFF;
+        }
+
+        body.night-theme .arrow {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            color: #aaa;
+        }
+
+        body.night-theme .arrow.rotated {
+            background: rgba(0,122,255,0.2);
+            border-color: #007AFF;
+            color: #007AFF;
         }
 
         /* Статус автомобиля */
@@ -608,15 +628,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
+            border-radius: 20px;
             background: rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
 
         .history-item:hover .history-arrow {
             transform: translateX(5px);
-            background: #007AFF;
-            color: white;
+            background: rgba(0,122,255,0.1);
+            border: 1px solid #007AFF;
+            color: #007AFF;
         }
 
         /* Результаты */
@@ -740,33 +761,6 @@
             font-weight: 500;
         }
 
-        /* Модальное окно */
-        .modal {
-            position: fixed;
-            bottom: 100px;
-            left: 16px;
-            right: 16px;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 18px;
-            border-radius: 24px;
-            display: none;
-            z-index: 2000;
-            text-align: center;
-            font-size: 15px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.2);
-            animation: slideIn 0.3s ease;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .modal.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
         /* Страницы */
         .page {
             display: none;
@@ -787,7 +781,7 @@
         }
 
         /* Стили для страниц */
-        .diagnostics-list, .support-card, .settings-item {
+        .diagnostics-list, .support-card, .settings-item, .about-card {
             background: rgba(0,0,0,0.02);
             border-radius: 24px;
             padding: 20px;
@@ -798,9 +792,96 @@
 
         body.night-theme .diagnostics-list,
         body.night-theme .support-card,
-        body.night-theme .settings-item {
+        body.night-theme .settings-item,
+        body.night-theme .about-card {
             background: rgba(255,255,255,0.05);
             border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Стили для страницы "О приложении" */
+        .about-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .about-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            box-shadow: 0 10px 20px rgba(0,122,255,0.3);
+        }
+
+        .about-title {
+            flex: 1;
+        }
+
+        .about-title h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .about-title p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .version-block {
+            background: rgba(0,122,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(0,122,255,0.2);
+        }
+
+        .version-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .version-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #007AFF;
+        }
+
+        .about-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .about-feature:last-child {
+            border-bottom: none;
+        }
+
+        .about-feature i {
+            width: 24px;
+            color: #007AFF;
+            font-size: 18px;
+        }
+
+        .about-feature span {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .about-feature small {
+            color: #999;
+            font-size: 12px;
         }
 
         /* Кнопки и переключатели */
@@ -941,7 +1022,7 @@
             <div class="menu-item" onclick="navigateToPage('support-page'); toggleMenu();">
                 <i class="fas fa-headset"></i> Поддержка
             </div>
-            <div class="menu-item" onclick="showNotification('🚀 Версия 1.0'); toggleMenu();">
+            <div class="menu-item" onclick="navigateToPage('about-page'); toggleMenu();">
                 <i class="fas fa-info-circle"></i> О приложении
             </div>
         </div>
@@ -1184,6 +1265,59 @@
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
+
+            <!-- О приложении -->
+            <div class="page" id="about-page">
+                <h1 style="font-size: 28px; margin-bottom: 20px;"><i class="fas fa-info-circle"></i> О приложении</h1>
+                
+                <div class="about-card">
+                    <div class="about-header">
+                        <div class="about-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="about-title">
+                            <h2>AutoHelper</h2>
+                            <p>Ваш личный авто-помощник</p>
+                        </div>
+                    </div>
+
+                    <div class="version-block">
+                        <span class="version-label">Текущая версия</span>
+                        <span class="version-number" id="app-version">1.0.0</span>
+                    </div>
+
+                    <div class="about-feature">
+                        <i class="fas fa-microchip"></i>
+                        <span>Диагностика автомобиля</span>
+                        <small>v1.0</small>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-map-pin"></i>
+                        <span>Поиск СТО в Уфе</span>
+                        <small>v1.0</small>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-history"></i>
+                        <span>История обслуживания</span>
+                        <small>v1.0</small>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-moon"></i>
+                        <span>Ночная тема</span>
+                        <small>v1.1</small>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-cube"></i>
+                        <span>3D модель автомобиля</span>
+                        <small>v1.2</small>
+                    </div>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); text-align: center; color: #999; font-size: 12px;">
+                        © 2024 AutoHelper<br>
+                        Все права защищены
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Нижняя навигация -->
@@ -1205,16 +1339,42 @@
                 <span>Профиль</span>
             </div>
         </div>
-
-        <!-- Модальное окно -->
-        <div class="modal" id="modal"></div>
     </div>
 
     <script type="module">
         // Импортируем Three.js и загрузчик
         import * as THREE from 'three';
         import { GLTFLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
-        import { OrbitControls } from 'https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+
+        // ==============================================
+        // ВЕРСИОНИРОВАНИЕ
+        // ==============================================
+        
+        const VERSION = {
+            major: 1,
+            minor: 2,
+            patch: 0
+        };
+
+        function getVersionString() {
+            return `${VERSION.major}.${VERSION.minor}.${VERSION.patch}`;
+        }
+
+        function updateVersion(type) {
+            if (type === 'major') {
+                VERSION.major += 1;
+                VERSION.minor = 0;
+                VERSION.patch = 0;
+            } else if (type === 'minor') {
+                VERSION.minor += 1;
+                VERSION.patch = 0;
+            } else if (type === 'patch') {
+                VERSION.patch += 1;
+            }
+            
+            document.getElementById('app-version').textContent = getVersionString();
+            console.log(`📱 Версия обновлена до ${getVersionString()}`);
+        }
 
         // ==============================================
         // ИНИЦИАЛИЗАЦИЯ 3D СЦЕНЫ
@@ -1225,7 +1385,7 @@
         
         // Создаем сцену
         const scene = new THREE.Scene();
-        scene.background = null; // Прозрачный фон
+        scene.background = null;
         
         // Камера
         const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -1247,18 +1407,11 @@
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
         directionalLight.position.set(3, 5, 2);
         directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 1024;
-        directionalLight.shadow.mapSize.height = 1024;
         scene.add(directionalLight);
 
         const backLight = new THREE.PointLight(0x4466ff, 0.6);
         backLight.position.set(-2, 1, -3);
         scene.add(backLight);
-
-        // Добавляем подсветку снизу
-        const bottomLight = new THREE.PointLight(0x3366ff, 0.3);
-        bottomLight.position.set(0, -1, 0);
-        scene.add(bottomLight);
 
         // Пол для теней
         const groundGeometry = new THREE.PlaneGeometry(10, 10);
@@ -1269,7 +1422,7 @@
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // Добавляем парящие частицы для атмосферы
+        // Частицы
         const particlesGeometry = new THREE.BufferGeometry();
         const particlesCount = 100;
         const posArray = new Float32Array(particlesCount * 3);
@@ -1292,149 +1445,59 @@
         scene.add(particlesMesh);
 
         // ==============================================
-        // ЗАГРУЗКА ВАШЕЙ ЛОКАЛЬНОЙ МОДЕЛИ
+        // ЗАГРУЗКА МОДЕЛИ
         // ==============================================
         
         const loader = new GLTFLoader();
         let carModel = null;
         
-        console.log('🔄 Начинаю загрузку модели из папки models...');
+        console.log('🔄 Начинаю загрузку модели...');
         
-        // Загружаем вашу модель
         loader.load(
-            'models/my_car.glb', // ← ВАША МОДЕЛЬ ИЗ ПАПКИ models
+            'models/my_car.glb',
             (gltf) => {
                 console.log('✅ Модель успешно загружена!');
                 carModel = gltf.scene;
                 
-                // Настройка модели
-                carModel.scale.set(2, 2, 2); // Масштаб (можно изменить)
-                carModel.position.set(0, 0.3, 0); // Позиция
-                carModel.rotation.y = Math.PI / 4; // Начальный поворот
+                carModel.scale.set(2, 2, 2);
+                carModel.position.set(0, 0.3, 0);
+                carModel.rotation.y = Math.PI / 4;
                 
-                // Включаем тени для всех частей модели
                 carModel.traverse((node) => {
                     if (node.isMesh) {
                         node.castShadow = true;
                         node.receiveShadow = true;
-                        
-                        // Улучшаем материалы
-                        if (node.material) {
-                            if (Array.isArray(node.material)) {
-                                node.material.forEach(mat => {
-                                    mat.metalness = 0.7;
-                                    mat.roughness = 0.3;
-                                    if (mat.emissive) {
-                                        mat.emissive.setHex(0x112233);
-                                    }
-                                });
-                            } else {
-                                node.material.metalness = 0.7;
-                                node.material.roughness = 0.3;
-                                if (node.material.emissive) {
-                                    node.material.emissive.setHex(0x112233);
-                                }
-                            }
-                        }
                     }
                 });
                 
                 scene.add(carModel);
-                
-                // Прячем индикатор загрузки
                 loadingIndicator.style.display = 'none';
             },
             (xhr) => {
-                // Прогресс загрузки
                 const percent = Math.round((xhr.loaded / xhr.total) * 100);
-                console.log(`🔄 Загрузка: ${percent}%`);
-                loadingIndicator.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Загрузка 3D модели... ${percent}%`;
+                loadingIndicator.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Загрузка... ${percent}%`;
             },
             (error) => {
                 console.error('❌ Ошибка загрузки модели:', error);
-                console.log('⚠️ Создаю простую модель как запасной вариант');
-                loadingIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Загрузка не удалась, создаю модель...';
-                
-                // Создаем простую модель на случай ошибки
-                createBackupModel();
+                loadingIndicator.style.display = 'none';
             }
         );
-
-        // Запасная модель (если ваша не загрузится)
-        function createBackupModel() {
-            const backupGroup = new THREE.Group();
-            
-            // Кузов
-            const bodyGeo = new THREE.BoxGeometry(2, 0.6, 1);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x3366ff, metalness: 0.7, emissive: new THREE.Color(0x112233) });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            body.position.y = 0.5;
-            body.castShadow = true;
-            body.receiveShadow = true;
-            backupGroup.add(body);
-            
-            // Кабина
-            const cabinGeo = new THREE.BoxGeometry(1, 0.5, 0.9);
-            const cabinMat = new THREE.MeshStandardMaterial({ color: 0x44aaff, metalness: 0.3 });
-            const cabin = new THREE.Mesh(cabinGeo, cabinMat);
-            cabin.position.set(-0.4, 1.0, 0);
-            cabin.castShadow = true;
-            cabin.receiveShadow = true;
-            backupGroup.add(cabin);
-            
-            // Колеса
-            const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 24);
-            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-            
-            const positions = [[-0.7, 0.3, -0.5], [0.7, 0.3, -0.5], [-0.7, 0.3, 0.5], [0.7, 0.3, 0.5]];
-            positions.forEach(pos => {
-                const wheel = new THREE.Mesh(wheelGeo, wheelMat);
-                wheel.rotation.z = Math.PI / 2;
-                wheel.position.set(pos[0], pos[1], pos[2]);
-                wheel.castShadow = true;
-                wheel.receiveShadow = true;
-                backupGroup.add(wheel);
-            });
-            
-            // Фары
-            const lightGeo = new THREE.SphereGeometry(0.1, 8);
-            const lightMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: new THREE.Color(0x442200) });
-            
-            const lightLeft = new THREE.Mesh(lightGeo, lightMat);
-            lightLeft.position.set(1.0, 0.7, -0.35);
-            backupGroup.add(lightLeft);
-            
-            const lightRight = new THREE.Mesh(lightGeo, lightMat);
-            lightRight.position.set(1.0, 0.7, 0.35);
-            backupGroup.add(lightRight);
-            
-            backupGroup.position.y = 0.2;
-            scene.add(backupGroup);
-            window.backupModel = backupGroup;
-            
-            loadingIndicator.style.display = 'none';
-        }
 
         // Анимация
         function animate() {
             requestAnimationFrame(animate);
             
-            // Вращаем модель
             if (carModel) {
                 carModel.rotation.y += 0.005;
-            } else if (window.backupModel) {
-                window.backupModel.rotation.y += 0.005;
             }
             
-            // Вращаем частицы
             particlesMesh.rotation.y += 0.001;
-            
             renderer.render(scene, camera);
         }
         
         animate();
 
-        // Обработка изменения размера окна
+        // Ресайз
         window.addEventListener('resize', () => {
             const width = container.clientWidth;
             const height = container.clientHeight;
@@ -1445,12 +1508,15 @@
         });
 
         // ==============================================
-        // КОД ДЛЯ TELEGRAM
+        // КОД ДЛЯ TELEGRAM (БЕЗ УВЕДОМЛЕНИЙ)
         // ==============================================
         
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
+
+        // Устанавливаем версию
+        document.getElementById('app-version').textContent = getVersionString();
 
         const user = tg.initDataUnsafe?.user;
         const username = user?.first_name || user?.username || 'друг';
@@ -1471,7 +1537,7 @@
             document.body.classList.toggle('night-theme');
             toggle.classList.toggle('active');
             localStorage.setItem('theme', document.body.classList.contains('night-theme') ? 'night' : 'day');
-            showNotification(document.body.classList.contains('night-theme') ? '🌙 Ночная тема' : '☀️ Дневная тема');
+            // Уведомление убрано
         }
 
         window.toggleTheme = toggleTheme;
@@ -1479,37 +1545,35 @@
         function toggleNotifications() {
             const toggle = document.getElementById('notifications-toggle');
             toggle.classList.toggle('active');
-            showNotification(toggle.classList.contains('active') ? '🔔 Уведомления включены' : '🔕 Уведомления отключены');
+            // Уведомление убрано
         }
 
         window.toggleNotifications = toggleNotifications;
 
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification('📋 Номер скопирован');
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            });
+            navigator.clipboard.writeText(text);
+            // Уведомление убрано
         }
 
         window.copyToClipboard = copyToClipboard;
 
         function openVK() {
             window.open('https://vk.com/metamrphsis', '_blank');
-            showNotification('📱 Открываю VK...');
+            // Уведомление убрано
         }
 
         window.openVK = openVK;
 
         function openTelegram() {
             window.open('https://t.me/qwqrwqqwwqq', '_blank');
-            showNotification('📱 Открываю Telegram...');
+            // Уведомление убрано
         }
 
         window.openTelegram = openTelegram;
 
         function openChat() {
             window.open('https://t.me/qwqrwqqwwqq', '_blank');
-            showNotification('💬 Открываю чат...');
+            // Уведомление убрано
         }
 
         window.openChat = openChat;
@@ -1532,10 +1596,11 @@
             else if (pageId === 'services-page') navItems[2].classList.add('active');
             else if (pageId === 'profile-page') navItems[3].classList.add('active');
             
-            // Закрываем меню если открыто
             toggleMenu(false);
             
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
 
         window.navigateToPage = navigateToPage;
@@ -1550,10 +1615,6 @@
             } else {
                 menu.classList.toggle('open');
                 overlay.classList.toggle('active');
-            }
-            
-            if (menu.classList.contains('open') && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
             }
         }
 
@@ -1590,7 +1651,9 @@
                 result.classList.add('show');
                 arrow.classList.add('rotated');
             }
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
 
         window.toggleDiagnostics = toggleDiagnostics;
@@ -1625,7 +1688,9 @@
                 result.classList.add('show');
                 arrow.classList.add('rotated');
             }
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
 
         window.toggleServices = toggleServices;
@@ -1658,45 +1723,40 @@
                 result.classList.add('show');
                 arrow.classList.add('rotated');
             }
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        window.toggleHistory = toggleHistory;
-
-        function showHistoryDetail(type) {
-            if (type === 'oil') showNotification('Замена масла 15.03.2024 • 5 900 ₽ • Лукойл 5W-30');
-            else if (type === 'brakes') showNotification('Колодки передние 02.03.2024 • 4 500 ₽ • TRW');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        window.showHistoryDetail = showHistoryDetail;
-
-        function showAllHistory() {
-            showNotification('📋 Вся история в разработке');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        window.showAllHistory = showAllHistory;
-
-        function showNotification(message) {
-            const modal = document.getElementById('modal');
-            modal.innerHTML = message;
-            modal.classList.add('show');
-            
-            setTimeout(() => {
-                modal.classList.remove('show');
-            }, 2000);
-            
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
 
-        window.showNotification = showNotification;
+        window.toggleHistory = toggleHistory;
+
+        function showHistoryDetail(type) {
+            if (type === 'oil') console.log('Замена масла 15.03.2024 • 5 900 ₽ • Лукойл 5W-30');
+            else if (type === 'brakes') console.log('Колодки передние 02.03.2024 • 4 500 ₽ • TRW');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        window.showHistoryDetail = showHistoryDetail;
+
+        function showAllHistory() {
+            console.log('📋 Вся история в разработке');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        window.showAllHistory = showAllHistory;
 
         tg.onEvent('backButtonClicked', () => {
             tg.close();
         });
+
+        // Пример обновления версии (для разработчика)
+        window.updateAppVersion = function(type) {
+            updateVersion(type);
+        };
     </script>
 </body>
 </html>
