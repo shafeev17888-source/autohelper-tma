@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Auto Helper</title>
+    <title>AutoHelper</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Библиотека для анимированных иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -56,6 +56,17 @@
             0% { box-shadow: 0 0 5px rgba(0,122,255,0.2); }
             50% { box-shadow: 0 0 20px rgba(0,122,255,0.4); }
             100% { box-shadow: 0 0 5px rgba(0,122,255,0.2); }
+        }
+
+        @keyframes menuFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         body {
@@ -128,7 +139,7 @@
             position: relative;
         }
 
-        /* Шапка с эффектом стекла */
+        /* Шапка */
         .header {
             display: flex;
             align-items: center;
@@ -182,27 +193,25 @@
             transform: scale(0.95);
         }
 
-        /* Меню с эффектом стекла */
+        /* Меню поверх контента (без сдвига) */
         .menu-panel {
             background: rgba(255,255,255,0.95);
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            margin-bottom: 24px;
             overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-            position: sticky;
-            top: 80px;
-            z-index: 99;
+            position: absolute;
+            top: 70px;
+            right: 16px;
+            left: 16px;
+            z-index: 1000;
             backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: none;
+            animation: menuFadeIn 0.3s ease;
         }
 
         .menu-panel.open {
-            max-height: 300px;
-            opacity: 1;
-            margin-bottom: 24px;
+            display: block;
         }
 
         .menu-item {
@@ -229,6 +238,23 @@
 
         .menu-item:last-child {
             border-bottom: none;
+        }
+
+        /* Затемнение фона при открытом меню */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 99;
+            backdrop-filter: blur(2px);
+        }
+
+        .menu-overlay.active {
+            display: block;
         }
 
         /* Контейнер для 3D модели */
@@ -280,7 +306,7 @@
             animation: pulse 1s ease-in-out infinite;
         }
 
-        /* Приветствие с анимацией */
+        /* Приветствие */
         .welcome {
             margin-bottom: 28px;
             animation: slideIn 0.6s ease;
@@ -315,7 +341,7 @@
             animation: pulse 2s ease-in-out infinite;
         }
 
-        /* Функции с анимацией */
+        /* Функции */
         .functions {
             display: flex;
             flex-direction: column;
@@ -406,7 +432,7 @@
             color: white;
         }
 
-        /* Статус автомобиля с неоновым эффектом */
+        /* Статус автомобиля */
         .car-status {
             background: rgba(0,0,0,0.02);
             border-radius: 28px;
@@ -489,7 +515,7 @@
             color: #4cd964;
         }
 
-        /* История с анимацией */
+        /* История */
         .history {
             margin-bottom: 32px;
         }
@@ -593,7 +619,7 @@
             color: white;
         }
 
-        /* Результаты с анимацией */
+        /* Результаты */
         .result-panel {
             background: rgba(0,122,255,0.05);
             border-radius: 20px;
@@ -635,7 +661,7 @@
             border-radius: 8px;
         }
 
-        /* Нижняя навигация с эффектом стекла */
+        /* Нижняя навигация */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -714,7 +740,7 @@
             font-weight: 500;
         }
 
-        /* Модальное окно с эффектом */
+        /* Модальное окно */
         .modal {
             position: fixed;
             bottom: 100px;
@@ -725,7 +751,7 @@
             padding: 18px;
             border-radius: 24px;
             display: none;
-            z-index: 1000;
+            z-index: 2000;
             text-align: center;
             font-size: 15px;
             backdrop-filter: blur(20px);
@@ -741,7 +767,7 @@
             animation: slideIn 0.3s ease;
         }
 
-        /* Страницы с анимацией */
+        /* Страницы */
         .page {
             display: none;
             opacity: 0;
@@ -755,7 +781,7 @@
             transform: translateY(0);
         }
 
-        /* Контент с отступом */
+        /* Контент */
         .content {
             padding-bottom: 90px;
         }
@@ -817,7 +843,7 @@
             transform: translateX(24px) scale(0.9);
         }
 
-        /* Контакты в поддержке */
+        /* Контакты */
         .contact-item {
             display: flex;
             align-items: center;
@@ -904,7 +930,10 @@
             </div>
         </div>
 
-        <!-- Меню -->
+        <!-- Затемнение фона при открытом меню -->
+        <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+        <!-- Меню (поверх контента) -->
         <div class="menu-panel" id="menuPanel">
             <div class="menu-item" onclick="navigateToPage('settings-page'); toggleMenu();">
                 <i class="fas fa-cog"></i> Настройки
@@ -912,7 +941,7 @@
             <div class="menu-item" onclick="navigateToPage('support-page'); toggleMenu();">
                 <i class="fas fa-headset"></i> Поддержка
             </div>
-            <div class="menu-item" onclick="showNotification('🚀 Версия 1.0')">
+            <div class="menu-item" onclick="showNotification('🚀 Версия 1.0'); toggleMenu();">
                 <i class="fas fa-info-circle"></i> О приложении
             </div>
         </div>
@@ -1416,7 +1445,7 @@
         });
 
         // ==============================================
-        // КОД ДЛЯ TELEGRAM (остается без изменений)
+        // КОД ДЛЯ TELEGRAM
         // ==============================================
         
         const tg = window.Telegram.WebApp;
@@ -1503,17 +1532,29 @@
             else if (pageId === 'services-page') navItems[2].classList.add('active');
             else if (pageId === 'profile-page') navItems[3].classList.add('active');
             
-            document.getElementById('menuPanel').classList.remove('open');
+            // Закрываем меню если открыто
+            toggleMenu(false);
             
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         window.navigateToPage = navigateToPage;
 
-        function toggleMenu() {
+        function toggleMenu(force) {
             const menu = document.getElementById('menuPanel');
-            menu.classList.toggle('open');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            const overlay = document.getElementById('menuOverlay');
+            
+            if (force === false) {
+                menu.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                menu.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+            
+            if (menu.classList.contains('open') && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
 
         window.toggleMenu = toggleMenu;
